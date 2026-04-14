@@ -1,6 +1,10 @@
-import React from "react";
+import React, { use } from "react";
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom'
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import axios from "axios";
+// import { handleSignup } from "../axios/signup";
 
 function SignUp () {
 
@@ -9,11 +13,28 @@ function SignUp () {
     const bgColor = "#fff9f6"
     const borderColor = "#ddd"
 
+    const navigate = useNavigate()
     const [showPassword, setShowPassword] = useState(false)
+    
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [pass, setPass ] = useState("");
+    const [mobile, setMobile] = useState("");
     const [role, setRole] = useState("")
 
     const setPassword = () => {
         setShowPassword(prev => !prev)
+    } 
+
+    const handleSignup = async() => {
+         const serverUrl = "http://localhost:3000/"
+        try{
+            const res = await axios.post(`${serverUrl}api/auth/signup`, {
+                username, email, role, password, mobile, 
+            }, {withCredentials: true})
+        } catch (err) {
+            console.log(err)
+        }
     } 
     
     return(
@@ -28,10 +49,12 @@ function SignUp () {
 
                     {/* full name */}
                     <div className="mb-4">
-                        <label htmlFor="fullname" className="block text-gray-700 font-medium mb-1" >Name</label>
-                        <input type="text" name="fullname" id="fullname"
+                        <label htmlFor="username" className="block text-gray-700 font-medium mb-1" >Name</label>
+                        <input type="text" name="username" id="username"
                         className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500"
                         placeholder="Enter your full name here.."
+                        onChange={(e) => setUsername(e.target.value)}
+                        value={username}
                         />
                     </div>
 
@@ -41,6 +64,8 @@ function SignUp () {
                         <input type="email" name="email" id="email"
                         className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500"
                         placeholder="Enter your E-mail"
+                        onChange={(e) => setEmail(e.target.value)}
+                        value={email}
                         />
                     </div>
 
@@ -50,6 +75,8 @@ function SignUp () {
                         <input type="number" name="mobile" id="mobile"
                         className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500"
                         placeholder="Enter your Mobile No."
+                        onChange={(e) => setMobile(e.target.value)}
+                        value={mobile}
                         />
                     </div>
 
@@ -61,6 +88,8 @@ function SignUp () {
                             name="password" id="password"
                             className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500"
                             placeholder="Password must be atleast of 6 characters"
+                            onChange={(e) => setPass(e.target.value)}
+                            value={pass}
                             />
                             <button className="absolute right-3 top-3.5 text-gray-500" onClick={setPassword}>
                                  {showPassword? <FaRegEyeSlash /> : <FaRegEye /> }
@@ -80,14 +109,26 @@ function SignUp () {
                                         style={
                                             role==r?
                                             {backgroundColor: primaryColor, color:"white"}: 
-                                            {border: borderColor, color: "#333"}
-                                        }>
+                                            {borderColor: borderColor, color: "#333"}
+                                        }
+                                        type='button'>
                                         {r}</button>
                                 })}
                         </div>
                     </div>
 
-                    <button style={{backgroundColor: primaryColor, color:"white"}}>Signup</button>
+                    <button className={`w-full font-semibold py-2 rounded-lg transition duration-200 cursor-pointer text-white bg-[#ff4d2d] hover:bg-[#e64323]`}
+                    onClick={handleSignup}
+                        >Signup
+                     </button>
+
+                    <button className={`w-full mt-4 mb-4 py-2 px-4 rounded-lg transition duration-200 cursor-pointer flex items-center justify-center gap-2 border-rounded-lg border-gray-400 hover:bg-gray-100`}
+                        > Signup with Google <FcGoogle />
+                     </button>
+
+                     <p onClick={() => navigate("/signin")} 
+                        className="cursor-pointer w-full flex items-center justify-center"
+                        >Already have an account? &nbsp; <span style={{color: primaryColor}}>Signin</span></p>   
 
             </div>
             
