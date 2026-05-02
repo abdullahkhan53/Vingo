@@ -8,7 +8,7 @@ import cors from "cors";
 const app = express();
 const port = process.env.PORT || 8080;
 
-// Prewritter Globally Middlewares --------
+// Prewritten Globally Middlewares --------
 app.use(express.json());
 app.use(cookieParser());
 

@@ -5,7 +5,7 @@ import genToken from "../utils/token.js"
 export const signUp = async (req, res) => {
     try{
         let {username, email, password, role, mobile} = req.body;
-        const user = await User.findOne({email});
+        let user = await User.findOne({email});
         if(user){
             return res.status(401).json({message: "User with this email is already exist."});
         }
@@ -40,18 +40,18 @@ export const signUp = async (req, res) => {
 export const signIn = async (req, res) => {
     try{
         let {email, password} = req.body;
-        const user = User.findOne({email})
+        let user = await User.findOne({email})
 
         if(!user){
             res.status(401).json({message: "User does'nt exist, please sign in first"});
         }
 
-        const isMatch = bcrypt.compare(user.password, password)
+        const isMatch = await bcrypt.compare(password, user.password)
         if(!isMatch){
             res.status(401).json({message: "Incorrect Password, Try again."})
         }
 
-        const token = genToken(newUser._id)
+        const token = genToken(user._id)
         res.cookie("token", token, {
             secure: false,
             sameSite: "strict",
@@ -59,11 +59,11 @@ export const signIn = async (req, res) => {
             httpOnly: true
         })
 
-        res.status(201).json(newUser);
+        res.status(201).json(user);
     }
     catch(err){
-        res.status(500).json({message: "something went wrong in signup"})
-        console.log("Check signup:", err)        
+        res.status(500).json({message: "something went wrong in signin"})
+        console.log("Check signIn:", err)        
     }
 }
 
