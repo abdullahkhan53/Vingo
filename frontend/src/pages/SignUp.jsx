@@ -3,8 +3,7 @@ import { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import axios from "axios";
-// import { handleSignup } from "../axios/signup";
+import { handleSignup } from "../axios/signup";
 
 function SignUp () {
 
@@ -26,17 +25,20 @@ function SignUp () {
         setShowPassword(prev => !prev)
     } 
 
-    const handleSignup = async() => {
-         const serverUrl = "http://localhost:3000/"
-        try{
-            const res = await axios.post(`${serverUrl}api/auth/signup`, {
-                username, email, role, password, mobile, 
-            }, {withCredentials: true})
-        } catch (err) {
-            console.log(err)
+    const onSignupClick = async() => {
+        // e.preventDefault();
+
+        const userData = {
+            username,
+            email,
+            mobile,
+            password: pass,
+            role,
         }
-    } 
-    
+        await handleSignup(userData);
+    }
+
+       
     return(
         
         <div className="min-h-screen w-full flex item-center justify-center p-4" style={{background: bgColor}}>
@@ -118,7 +120,7 @@ function SignUp () {
                     </div>
 
                     <button className={`w-full font-semibold py-2 rounded-lg transition duration-200 cursor-pointer text-white bg-[#ff4d2d] hover:bg-[#e64323]`}
-                    onClick={handleSignup}
+                    onClick={onSignupClick}
                         >Signup
                      </button>
 
