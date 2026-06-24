@@ -2,6 +2,7 @@ import react, { use, useState } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { handleSendEmail, handleSetNewPassword, handleVerifyOtp } from "../axios/forgetPassword.js";
 
 
 function ForgotPassword(){
@@ -9,7 +10,7 @@ function ForgotPassword(){
     const navigate = useNavigate()
     const [showPassword, setShowPassword] = useState(false)
 
-    const [step, setStep] = useState(3)
+    const [step, setStep] = useState(1)
     const [email, setEmail] = useState("")
     const [otp, setOtp] = useState("")
     const [newPassword, setNewPassword] = useState("");
@@ -17,6 +18,30 @@ function ForgotPassword(){
     const setPassword = () => {
         setShowPassword(prev => !prev)
     } 
+
+    const onSentOtp = async() => {
+        const data = {
+            email,            
+        }
+        await handleSendEmail(data)
+        setStep(2)
+    }
+    const onVerifyOtp = async() => {
+        const data = {
+            email,       
+            otp,     
+        }
+        await handleVerifyOtp(data)
+        setStep(3)
+    }
+    const onSetNewPassword = async() => {
+        const data = {
+            email,
+            newPassword,            
+        }
+        await handleSetNewPassword(data)
+        setStep(1)
+    }
 
     return <>
         <div className="flex w-full items-center justify-center min-h-screen p-4 bg-[#fff9f6]">
@@ -39,7 +64,7 @@ function ForgotPassword(){
                     />
                 </div>
                     <button className={`w-full font-semibold py-2 rounded-lg transition duration-200 cursor-pointer text-white bg-[#ff4d2d] hover:bg-[#e64323]`}
-                        
+                        onClick={onSentOtp}
                     >Send OTP
                      </button>
                 </div>
@@ -52,13 +77,13 @@ function ForgotPassword(){
                     <label htmlFor="otp" className="block text-gray-700 font-medium mb-1" >OTP</label>
                     <input type="text" name="otp" id="otp"
                         className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500"
-                        placeholder="Enter your E-mail"
+                        placeholder="Enter OTP"
                         onChange={(e) => setOtp(e.target.value)}
                         value={otp}
                     />
                 </div>
                     <button className={`w-full font-semibold py-2 rounded-lg transition duration-200 cursor-pointer text-white bg-[#ff4d2d] hover:bg-[#e64323]`}
-                        
+                        onClick={onVerifyOtp}
                     >Verify
                      </button>
                 </div>
@@ -101,7 +126,7 @@ function ForgotPassword(){
                     </div>
 
                     <button className={`w-full font-semibold py-2 rounded-lg transition duration-200 cursor-pointer text-white bg-[#ff4d2d] hover:bg-[#e64323]`}
-                        
+                        onClick={onSetNewPassword}
                     > Change Password 
                      </button>
                 </div>
