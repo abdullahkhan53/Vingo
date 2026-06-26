@@ -143,3 +143,30 @@ export const setNewPassword = async(req, res) => {
         return res.status(500).json({message: "something went wrong in OTP reset password", error})
     }
 }
+
+
+export const googleAuth = async(req, res) => {
+    try {
+        let {username, email, role, mobile} = req.body;
+        let user = await User.findOne({email});
+        if(!user) {
+            let newUser = await User.create({
+                username, email, role, mobile
+            })
+            console.log(newUser);
+        }
+            const token = await genToken(user._id)
+            res.cookie("token", token, {
+                secure: false,
+                sameSite: "strict",
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+                httpOnly: true
+            })
+            console.log(token);
+            console.log(user);
+            return res.status(201).json({message: "User Logged in"})
+
+    } catch (error) {
+        return res.status(500).json({message: `Error In Google Authentication: ${error}`})
+    }
+}
