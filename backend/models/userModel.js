@@ -23,6 +23,16 @@ const  userSchema = new Schema({
     mobile: {
         type: Number,
         required: true,
+    },
+    sendOtp:{
+        type: Number,
+    },
+    isOtpVerified:{
+        type: Boolean,
+        default: false,
+    },
+    otpExpires:{
+        type: Date,
     }
 
 });
