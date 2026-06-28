@@ -62,11 +62,12 @@ export const signIn = async (req, res) => {
             httpOnly: true
         })
 
-        res.status(201).json(user);
+        console.log(user)
+        return res.status(201).json(user);
     }
     catch(err){
-        res.status(500).json({message: "something went wrong in signin"})
-        console.log("Check signIn:", err)        
+        return res.status(500).json({message: "something went wrong in signin", err})
+        // console.log("Check signIn:", err)        
     }
 }
 
