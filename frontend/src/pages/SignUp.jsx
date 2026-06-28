@@ -4,6 +4,10 @@ import { useNavigate } from 'react-router-dom'
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { handleSignup } from "../axios/signup";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../utils/firebase";
+import { handleGoogleAuth } from "../axios/googleAuth";
+
 
 function SignUp () {
 
@@ -38,6 +42,26 @@ function SignUp () {
         await handleSignup(userData);
     }
 
+    const onGoogleAuthClick = async(req, res) => {
+        try {
+            if(!mobile){
+                return alert("Mobile no required")
+            }
+            const provider = new GoogleAuthProvider()
+            const popUp = await signInWithPopup(auth, provider);
+            console.log(popUp);
+            console.log(popUp.user.displayName);
+            const userData = {
+                username : popUp.user.displayName,
+                email : popUp.user.email,
+                mobile,
+                role,
+            }
+            const response = await handleGoogleAuth(userData);
+        } catch (error) {
+            return res.status(401).josn({message: "Error in handle google auth", eror})
+        }
+    }
        
     return(
         
@@ -125,6 +149,7 @@ function SignUp () {
                      </button>
 
                     <button className={`w-full mt-4 mb-4 py-2 px-4 rounded-lg transition duration-200 cursor-pointer flex items-center justify-center gap-2 border-rounded-lg border-gray-400 hover:bg-gray-100`}
+                        onClick={onGoogleAuthClick}
                         > Signup with Google <FcGoogle />
                      </button>
 
