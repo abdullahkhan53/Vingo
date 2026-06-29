@@ -10,7 +10,7 @@ export const handleSendEmail = async(data) => {
         console.log("Axios Response ", response)
         return response.data
     } catch (error) {
-        console.log(error)
+        return console.log("ERROR IN AXIOS FORGOTPASSWORD", error)
     }
 
 }

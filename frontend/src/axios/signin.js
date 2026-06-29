@@ -8,6 +8,6 @@ export const handleSignin = async(data) => {
         )
         console.log(res);
     } catch (err) {
-        console.log('Error in SignIn', err)
+        throw err;
     }
 }

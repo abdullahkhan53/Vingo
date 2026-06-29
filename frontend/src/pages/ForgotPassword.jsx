@@ -14,33 +14,74 @@ function ForgotPassword(){
     const [email, setEmail] = useState("")
     const [otp, setOtp] = useState("")
     const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [err, setErr] = useState("");
 
     const setPassword = () => {
         setShowPassword(prev => !prev)
     } 
 
     const onSentOtp = async() => {
-        const data = {
-            email,            
+        if (!email.trim()) {
+            setErr("Please enter your email address first!");
+            return; 
         }
-        await handleSendEmail(data)
-        setStep(2)
+        try{
+            setErr("")
+            const data = {
+                email,            
+            }
+            await handleSendEmail(data) 
+            setStep(2)         
+        } catch(error) {
+            console.log(error)
+            setErr(error.response.data.message || "something went wrong")
+        }
     }
     const onVerifyOtp = async() => {
-        const data = {
-            email,       
-            otp,     
+        if (!otp.trim()) {
+            setErr("Please enter your OTP first!");
+            return; 
         }
-        await handleVerifyOtp(data)
-        setStep(3)
+
+       try {
+            setErr("")
+            const data = {
+                email,       
+                otp,     
+            }
+            await handleVerifyOtp(data)
+            setStep(3)
+       } catch (error) {
+           setErr(error.response.data.message || "something went wrong")
+        }
+        
     }
     const onSetNewPassword = async() => {
-        const data = {
-            email,
-            newPassword,            
+        if (!newPassword.trim()) {
+            setErr("Please enter your new password first!");
+            return; 
         }
-        await handleSetNewPassword(data)
-        setStep(1)
+        if(newPassword.length < 6 ){
+            setErr("Password must be of atleast 6 characters");
+            return;
+        }
+        if(newPassword != confirmPassword){
+            setErr("Password should be same in both fields!")
+            return;
+        }
+        try {
+            setErr("")
+            const data = {
+                email,
+                newPassword,            
+            }
+            await handleSetNewPassword(data)
+            setStep(1);
+            navigate("/signin")
+        } catch (error) {
+            setErr(error.response.data.message || "something went wrong")
+        }
     }
 
     return <>
@@ -61,12 +102,14 @@ function ForgotPassword(){
                         placeholder="Enter your E-mail"
                         onChange={(e) => setEmail(e.target.value)}
                         value={email}
+                        required
                     />
                 </div>
                     <button className={`w-full font-semibold py-2 rounded-lg transition duration-200 cursor-pointer text-white bg-[#ff4d2d] hover:bg-[#e64323]`}
                         onClick={onSentOtp}
                     >Send OTP
                      </button>
+                     <p className="text-red-500 text-center">{err ? `*${err}` : ""}</p>
                 </div>
                 }
 
@@ -80,12 +123,14 @@ function ForgotPassword(){
                         placeholder="Enter OTP"
                         onChange={(e) => setOtp(e.target.value)}
                         value={otp}
+                        required
                     />
                 </div>
                     <button className={`w-full font-semibold py-2 rounded-lg transition duration-200 cursor-pointer text-white bg-[#ff4d2d] hover:bg-[#e64323]`}
                         onClick={onVerifyOtp}
                     >Verify
                      </button>
+                     <p className="text-red-500 text-center">{err ? `*${err}` : ""}</p>
                 </div>
                 }
 
@@ -102,6 +147,7 @@ function ForgotPassword(){
                                 placeholder="Password must be atleast of 6 characters"
                                 onChange={(e) => setNewPassword(e.target.value)}
                                 value={newPassword}
+                                required
                             />
                             <button className="absolute right-3 top-3.5 text-gray-500" onClick={setPassword}>
                                 {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
@@ -117,6 +163,9 @@ function ForgotPassword(){
                                 name="confirmPassword" id="confirmPassword"
                                 className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500"
                                 placeholder="Password must be atleast of 6 characters"
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                value={confirmPassword}
+                                required
                             />
                             <button className="absolute right-3 top-3.5 text-gray-500" onClick={setPassword}>
                                 {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
@@ -129,6 +178,7 @@ function ForgotPassword(){
                         onClick={onSetNewPassword}
                     > Change Password 
                      </button>
+                     <p className="text-red-500 text-center">{err ? `*${err}` : ""}</p>
                 </div>
                 }
             

@@ -9,6 +9,6 @@ export const handleSignup = async(data) => {
          console.log(response)
          return response.data
     } catch (err) {
-        console.log(err)
+        throw err;
     }
 } 

@@ -23,7 +23,8 @@ function SignUp () {
     const [email, setEmail] = useState("");
     const [pass, setPass ] = useState("");
     const [mobile, setMobile] = useState("");
-    const [role, setRole] = useState("")
+    const [role, setRole] = useState("user");
+    const [err, setErr] = useState("");
 
     const setPassword = () => {
         setShowPassword(prev => !prev)
@@ -31,8 +32,13 @@ function SignUp () {
 
     const onSignupClick = async() => {
         // e.preventDefault();
-
-        const userData = {
+        // if(!username.trim() || !email.trim() || !mobile.trim() || !password.trim() || !role.trim() ){
+        //     setErr("Put Details First!");
+        //     return;
+        // }
+        setErr("")
+        try {
+            const userData = {
             username,
             email,
             mobile,
@@ -40,6 +46,10 @@ function SignUp () {
             role,
         }
         await handleSignup(userData);
+        return console.log("Alright")
+        } catch (error) {   
+            setErr(error.response.data.message)
+        }
     }
 
     const onGoogleAuthClick = async(req, res) => {
@@ -81,6 +91,7 @@ function SignUp () {
                         placeholder="Enter your full name here.."
                         onChange={(e) => setUsername(e.target.value)}
                         value={username}
+                        required
                         />
                     </div>
 
@@ -92,6 +103,7 @@ function SignUp () {
                         placeholder="Enter your E-mail"
                         onChange={(e) => setEmail(e.target.value)}
                         value={email}
+                        required
                         />
                     </div>
 
@@ -103,6 +115,7 @@ function SignUp () {
                         placeholder="Enter your Mobile No."
                         onChange={(e) => setMobile(e.target.value)}
                         value={mobile}
+                        required
                         />
                     </div>
 
@@ -116,6 +129,7 @@ function SignUp () {
                             placeholder="Password must be atleast of 6 characters"
                             onChange={(e) => setPass(e.target.value)}
                             value={pass}
+                            required
                             />
                             <button className="absolute right-3 top-3.5 text-gray-500" onClick={setPassword}>
                                  {showPassword? <FaRegEyeSlash /> : <FaRegEye /> }
@@ -147,6 +161,7 @@ function SignUp () {
                     onClick={onSignupClick}
                         >Signup
                      </button>
+                     <p className="text-red-500 text-center m-5">{err ? `*${err}` : ""}</p>
 
                     <button className={`w-full mt-4 mb-4 py-2 px-4 rounded-lg transition duration-200 cursor-pointer flex items-center justify-center gap-2 border-rounded-lg border-gray-400 hover:bg-gray-100`}
                         onClick={onGoogleAuthClick}

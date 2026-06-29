@@ -17,6 +17,7 @@ function SignIp() {
 
     const [email, setEmail] = useState("");
     const [pass, setPass] = useState("");
+    const [err, setErr] = useState("");
 
     const setPassword = () => {
         setShowPassword(prev => !prev)
@@ -24,12 +25,16 @@ function SignIp() {
 
     const onSigninClick = async () => {
         // e.preventDefault();
-
-        const userData = {
+        setErr("")
+        try {
+            const userData = {
             email,
             password: pass,
+            }
+            await handleSignin(userData);
+        } catch (error) {
+            return setErr(error.response.data.message)
         }
-        await handleSignin(userData);
     }
 
 
@@ -85,6 +90,7 @@ function SignIp() {
                     onClick={onSigninClick}
                 >Login
                 </button>
+                <p className="text-red-500 text-center">{err ? `*${err}` : ""}</p>
 
                 <button className={`w-full mt-4 mb-4 py-2 px-4 rounded-lg transition duration-200 cursor-pointer flex items-center justify-center gap-2 border-rounded-lg border-gray-400 hover:bg-gray-100`}
                 > Signin with Google <FcGoogle />
