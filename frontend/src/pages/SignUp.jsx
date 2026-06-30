@@ -7,7 +7,7 @@ import { handleSignup } from "../axios/signup";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../utils/firebase";
 import { handleGoogleAuth } from "../axios/googleAuth";
-
+import { ClipLoader } from "react-spinners";
 
 function SignUp () {
 
@@ -25,6 +25,7 @@ function SignUp () {
     const [mobile, setMobile] = useState("");
     const [role, setRole] = useState("user");
     const [err, setErr] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const setPassword = () => {
         setShowPassword(prev => !prev)
@@ -36,6 +37,7 @@ function SignUp () {
         //     setErr("Put Details First!");
         //     return;
         // }
+        setLoading(true);
         setErr("")
         try {
             const userData = {
@@ -46,16 +48,18 @@ function SignUp () {
             role,
         }
         await handleSignup(userData);
-        return console.log("Alright")
+        setLoading(false);
         } catch (error) {   
             setErr(error.response.data.message)
+            setLoading(false);
         }
     }
 
     const onGoogleAuthClick = async(req, res) => {
         try {
+            setErr("")
             if(!mobile){
-                return alert("Mobile no required")
+                return setErr("Mobile no is required")
             }
             const provider = new GoogleAuthProvider()
             const popUp = await signInWithPopup(auth, provider);
@@ -68,8 +72,9 @@ function SignUp () {
                 role,
             }
             const response = await handleGoogleAuth(userData);
+            return res.status(201).json(response)
         } catch (error) {
-            return res.status(401).josn({message: "Error in handle google auth", eror})
+            return setErr(error.response.data.message)
         }
     }
        
@@ -159,7 +164,8 @@ function SignUp () {
 
                     <button className={`w-full font-semibold py-2 rounded-lg transition duration-200 cursor-pointer text-white bg-[#ff4d2d] hover:bg-[#e64323]`}
                     onClick={onSignupClick}
-                        >Signup
+                        >
+                            {loading? <ClipLoader size={20} color="#fff"/> : "Sign Up"}
                      </button>
                      <p className="text-red-500 text-center m-5">{err ? `*${err}` : ""}</p>
 

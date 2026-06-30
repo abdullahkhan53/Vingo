@@ -162,7 +162,6 @@ export const googleAuth = async(req, res) => {
                 maxAge: 7 * 24 * 60 * 60 * 1000,
                 httpOnly: true
             })
-            console.log(token);
             console.log(user);
             return res.status(201).json({message: "User Logged in"})
 

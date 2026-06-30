@@ -11,5 +11,6 @@ export const handleGoogleAuth = async(data) => {
 
     } catch (error) {
         console.log("Status : 401  ---  Error in handle google auth", error)
+        throw error;
     }
 }

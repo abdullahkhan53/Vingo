@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom'
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { handleSignin } from "../axios/signin";
+import { handleGoogleAuth } from "../axios/googleAuth";
+import { ClipLoader } from "react-spinners";
 
-function SignIp() {
+function SignIn() {
 
     const primaryColor = "#ff4d2d"
     const hoverColor = "#e64323"
@@ -18,13 +20,14 @@ function SignIp() {
     const [email, setEmail] = useState("");
     const [pass, setPass] = useState("");
     const [err, setErr] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const setPassword = () => {
         setShowPassword(prev => !prev)
     }
 
     const onSigninClick = async () => {
-        // e.preventDefault();
+        setLoading(true)
         setErr("")
         try {
             const userData = {
@@ -32,10 +35,28 @@ function SignIp() {
             password: pass,
             }
             await handleSignin(userData);
+            setLoading(false)
         } catch (error) {
-            return setErr(error.response.data.message)
+            setErr(error.response.data.message)
+            setLoading(false)
         }
     }
+
+    const onGoogleAuthClick = async(req, res) => {
+            try {
+                setErr("")
+                const provider = new GoogleAuthProvider()
+                const popUp = await signInWithPopup(auth, provider);
+                console.log(popUp);
+                console.log(popUp.user.displayName);
+                const userData = {
+                    email : popUp.user.email,
+                }
+                const response = await handleGoogleAuth(userData);
+            } catch (error) {
+                return setErr(error.response.data.message)
+            }
+        }
 
 
     return (
@@ -88,11 +109,13 @@ function SignIp() {
 
                 <button className={`w-full font-semibold py-2 rounded-lg transition duration-200 cursor-pointer text-white bg-[#ff4d2d] hover:bg-[#e64323]`}
                     onClick={onSigninClick}
-                >Login
+                >
+                    {loading ? <ClipLoader size={20} color="#fff"/> : "Login"}
                 </button>
                 <p className="text-red-500 text-center">{err ? `*${err}` : ""}</p>
 
                 <button className={`w-full mt-4 mb-4 py-2 px-4 rounded-lg transition duration-200 cursor-pointer flex items-center justify-center gap-2 border-rounded-lg border-gray-400 hover:bg-gray-100`}
+                onClick={onGoogleAuthClick}
                 > Signin with Google <FcGoogle />
                 </button>
 
@@ -107,4 +130,4 @@ function SignIp() {
     )
 }
 
-export default SignIp;
+export default SignIn;
