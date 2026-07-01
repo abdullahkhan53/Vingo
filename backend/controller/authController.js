@@ -24,15 +24,16 @@ export const signUp = async (req, res) => {
             mobile,
         })
 
-        const token = genToken(newUser._id)
+        const token = await genToken(newUser._id)
 
         res.cookie("token", token, {
             secure: false,
-            sameSite: "strict",
+            // sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000,
             httpOnly: true
         })
 
+        // console.log(token)
         return res.status(201).json(newUser);
     }
     catch(err){
@@ -54,14 +55,16 @@ export const signIn = async (req, res) => {
            return res.status(401).json({message: "Incorrect Password, Try again."})
         }
 
-        const token = genToken(user._id)
+        const token = await genToken(user._id)
         res.cookie("token", token, {
             secure: false,
-            sameSite: "strict",
+            // sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000,
             httpOnly: true
         })
-
+        console.log(token);
+        // console.log("RESPONSE", res.cookie)
+        console.log("REQUEST", req.cookies)
         res.status(201).json(user);
     }
     catch(err){
@@ -158,7 +161,7 @@ export const googleAuth = async(req, res) => {
             const token = await genToken(user._id)
             res.cookie("token", token, {
                 secure: false,
-                sameSite: "strict",
+                // sameSite: "strict",
                 maxAge: 7 * 24 * 60 * 60 * 1000,
                 httpOnly: true
             })

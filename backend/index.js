@@ -3,7 +3,9 @@ import "dotenv/config";
 import connectDb from "./config/db.js";
 import cookieParser from "cookie-parser";
 import Authrouter from "./routes/authRoutes.js";
+import Userrouter from "./routes/userRoutes.js";
 import cors from "cors";
+import User from "./models/userModel.js";
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -20,6 +22,7 @@ app.use(cors({
 
 // Routes ------
 app.use("/api/auth", Authrouter);
+app.use("/api/user", Userrouter);
 
 
 
