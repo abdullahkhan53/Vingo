@@ -64,7 +64,7 @@ export const signIn = async (req, res) => {
         })
         console.log(token);
         // console.log("RESPONSE", res.cookie)
-        console.log("REQUEST", req.cookies)
+        // console.log("REQUEST", req.cookies)
         res.status(201).json(user);
     }
     catch(err){
