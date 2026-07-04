@@ -6,6 +6,7 @@ import { FcGoogle } from "react-icons/fc";
 import { handleSignin } from "../axios/signin";
 import { handleGoogleAuth } from "../axios/googleAuth";
 import { ClipLoader } from "react-spinners";
+import {useDispatch} from "react-redux"
 
 function SignIn() {
 
@@ -22,6 +23,8 @@ function SignIn() {
     const [err, setErr] = useState("");
     const [loading, setLoading] = useState(false);
 
+    const dispatch = useDispatch()
+
     const setPassword = () => {
         setShowPassword(prev => !prev)
     }
@@ -34,7 +37,7 @@ function SignIn() {
             email,
             password: pass,
             }
-            await handleSignin(userData);
+            await handleSignin(userData, dispatch);
             setLoading(false)
         } catch (error) {
             setErr(error.response.data.message)

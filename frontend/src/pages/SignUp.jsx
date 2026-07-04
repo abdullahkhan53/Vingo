@@ -8,6 +8,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../utils/firebase";
 import { handleGoogleAuth } from "../axios/googleAuth";
 import { ClipLoader } from "react-spinners";
+import { useDispatch } from "react-redux";
 
 function SignUp () {
 
@@ -26,6 +27,8 @@ function SignUp () {
     const [role, setRole] = useState("user");
     const [err, setErr] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const dispatch = useDispatch()
 
     const setPassword = () => {
         setShowPassword(prev => !prev)
@@ -47,7 +50,7 @@ function SignUp () {
             password: pass,
             role,
         }
-        await handleSignup(userData);
+        await handleSignup(userData, dispatch);
         setLoading(false);
         } catch (error) {   
             setErr(error.response.data.message)
@@ -71,7 +74,7 @@ function SignUp () {
                 mobile,
                 role,
             }
-            const response = await handleGoogleAuth(userData);
+            const response = await handleGoogleAuth(userData, dispatch);
             return res.status(201).json(response)
         } catch (error) {
             return setErr(error.response.data.message)

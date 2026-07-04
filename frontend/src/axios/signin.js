@@ -1,12 +1,17 @@
 import axios from "axios";
+
+import { setUserData } from "../redux/userSlice";
 const serverUrl = "http://localhost:3000/"
 
-export const handleSignin = async(data) => {
+
+export const handleSignin = async(data, dispatch) => {
+    
     try{
-        const res = await axios.post(`${serverUrl}api/auth/signin`, data,
+        const response = await axios.post(`${serverUrl}api/auth/signin`, data,
             {withCredentials: true}
         )
-        console.log(res);
+        // console.log(response);
+        dispatch(setUserData(response.data))
     } catch (err) {
         throw err;
     }
