@@ -3,18 +3,17 @@ import {useSelector} from "react-redux";
 import UserDashboard from "../components/UserDashboard";
 import OwnerDashboard from "../components/OwnerDashboard";
 import DeliveryBoyDashboard from "../components/DeliveryBoyDashboard";
-
-
+import Navbar from "../components/Navbar";
 
 function  Home() {
-    const userData = useSelector(state=>state.user);
+    const userData = useSelector(state=>state.user?.userData);
     return(
-        <>
-        <h1>Welcome to the Home Page</h1>
+        <div className="w-full h-full bg-[#fff9f6]">
+        <Navbar/>
         {userData.role == "user" && <UserDashboard/>}
         {userData.role == "owner" && <OwnerDashboard/>}
         {userData.role == "deliveryBoy" && <DeliveryBoyDashboard/>}
-        </>
+        </div>
     )
 }
 
