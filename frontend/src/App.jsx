@@ -5,11 +5,13 @@ import ForgotPassword from './pages/forgotPassword'
 import useGenCurrUser from './hooks/useGenCurrUser'
 import {useSelector} from "react-redux";
 import Home from './pages/Home'
+import useGetCity from './hooks/useGetCity'
 // import UserDashboard from './components/UserDashboard'
 
 function App() {
 
   useGenCurrUser()
+  useGetCity()
   const userData = useSelector((state) => state.user?.userData);
 
   return (
