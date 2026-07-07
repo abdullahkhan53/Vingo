@@ -75,8 +75,11 @@ export const signIn = async (req, res) => {
 
 export const logout = async(req, res) => {
     try{
-        res.clearCookie("token");
-        res.status(201).json({message: "You logged out"});
+        res.clearCookie("token", {
+            secure: false,
+            httpOnly: true
+        });
+        res.status(200).json({message: "You logged out"});
     } 
     catch(err) {
         res.status(500).json(`Error in Logout: ${err}`);
@@ -153,11 +156,11 @@ export const googleAuth = async(req, res) => {
         let {username, email, role, mobile} = req.body;
         let user = await User.findOne({email});
         if(!user) {
-            let newUser = await User.create({
+            user = await User.create({
                 username, email, role, mobile
             })
-            console.log(newUser);
-        }
+            console.log(user);
+        }   
             const token = await genToken(user._id)
             res.cookie("token", token, {
                 secure: false,
