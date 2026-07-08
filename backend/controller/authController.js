@@ -169,7 +169,8 @@ export const googleAuth = async(req, res) => {
                 httpOnly: true
             })
             console.log(user);
-            return res.status(201).json({message: "User Logged in"})
+            // return res.status(201).json({message: "User Logged in"})
+            return user;
 
     } catch (error) {
         return res.status(500).json({message: `Error In Google Authentication: ${error}`})
