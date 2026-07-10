@@ -8,8 +8,13 @@ const shopSchema = new Schema({
         required: true
     },
     image:{
-        type: String,
-        required: true  
+        url:{
+            type: String,
+            required: true
+        },
+        fileName:{
+            type: String,
+        }  
     },
     owner:{
         type: mongoose.Schema.Types.ObjectId,
@@ -23,9 +28,13 @@ const shopSchema = new Schema({
         type: String,
         required: true
     },
+    address:{
+        type: String,
+        required: true
+    },
     items:{
         type: mongoose.Schema.Types.objectId,
-        red: "Item"
+        ref: "Item"
     }
 });
 

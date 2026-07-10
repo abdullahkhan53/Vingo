@@ -8,8 +8,13 @@ const itemSchema = new Schema({
         required: true
     },
     image:{
-        type: String,
-        required: true  
+         url:{
+            type: String,
+            required: true
+        },
+        fileName:{
+            type: String,
+        }  
     },
     shop:{
         type: mongoose.Schema.Types.ObjectId,
