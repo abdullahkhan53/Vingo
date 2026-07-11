@@ -1,26 +1,40 @@
-import { FaLocationDot } from "react-icons/fa6";
+import { FaLocationDot, FaPlus } from "react-icons/fa6";
 import { FaShoppingCart } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
 import { useSelector } from "react-redux";
 import { RxCross2 } from "react-icons/rx";
 import {useState} from "react";
+import { handleLogout } from "../axios/logout";
+import { useDispatch } from "react-redux";
 
 function Navbar() {
-    const userData = useSelector(state => state.user?.userData); 
+    const {userData, city} = useSelector(state => state.user);
+    const dispatch = useDispatch();
     const [showInfo, setShowInfo] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
+
+    const onLogoutClick = async() => {
+        try{
+            await handleLogout(dispatch)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return(
         <>
             <div className="w-full h-[80px] flex items-center justify-between md:justify-center gap-[30px]
-                px-[20px] fixed top-5 z-[9999] bg-[#fff9f6] overflow-visible ">
+                px-[20px] fixed top-5 z-[9999]  overflow-visible ">
 
                     <h1 className="text-3xl font-bold mb-2 text-[#ff4d2d]">Vingo</h1>
-                    <div className="md:w-[60%] lg-w[40%] h-[70px] bg-white shadow-xl rounded-lg hidden md:flex items-center gap-[20px]">
+                    {
+                        userData.role == "user" &&
+                        <div className="md:w-[60%] lg-w[40%] h-[70px] bg-white shadow-xl rounded-lg hidden md:flex items-center gap-[20px]">
 
                         {/* CITY SECTION */}
                         <div className="w-[30%] h-full flex items-center justify-center overflow-hidden gap-[10px] px-[10px] border-r[2px] border-gray-400 ">
                             <FaLocationDot size={25} className="text-[#ff4d2d]"/>
-                            <div className="w-[80%]  text-gray-600 flex justify-between">Karachi <span>|</span></div>
+                            <div className="w-[80%]  text-gray-600 flex justify-between">{city} <span>|</span></div>
                         </div>
 
                         {/* SEARCH SECTION */}
@@ -30,15 +44,16 @@ function Navbar() {
                         </div>
 
                     </div>
+                    }
 
                     {
-                        showSearch &&
+                        showSearch && userData.role == "user" &&
             
                         <div className="fixed top-[80px] left-0 w-full h-[70px] bg-white shadow-lg flex items-center justify-center gap-[20px] px-[20px] z-[9999]">
                             {/* CITY SECTION */}
                         <div className="w-[30%] h-full flex items-center justify-center overflow-hidden gap-[10px] px-[10px] border-r[2px] border-gray-400 ">
                             <FaLocationDot size={25} className="text-[#ff4d2d]"/>
-                            <div className="w-[80%] truncate text-gray-600 flex justify-between">Karachi <span>|</span></div>
+                            <div className="w-[80%] truncate text-gray-600 flex justify-between">{city} <span>|</span></div>
                         </div>
 
                         {/* SEARCH SECTION */}
@@ -50,18 +65,48 @@ function Navbar() {
                     }
 
                     <div className="flex items-center gap-[20px] ">
-                        {showSearch? <RxCross2 size={25} className="text-[#ff4d2d] cursor-pointer" onClick={()=>setShowSearch(false)}/> :
+                        {
+                            userData.role == "user" &&
+                            (showSearch? <RxCross2 size={25} className="text-[#ff4d2d] cursor-pointer" onClick={()=>setShowSearch(false)}/> :
                         <CiSearch size={25} className="text-[#ff4d2d] truncate md:hidden" onClick={() => setShowSearch(true)}/>
+                             )
                         }
+
+
+
                         {/* CART */}
                         <div className="cursor-pointer relative">
-                            <FaShoppingCart size={25} className="text-[#ff4d2d]"/>
-                            <span className="absolute right-[-9px] top-[-12px] text-[#ff4d3d]">0</span>
+                            {
+                                userData.role == "owner" ?
+
+                                <div className="flex items-center gap-5">
+                                <button className="flex items-center bg-[#ff4d2d] text-white p-2 rounded-lg gap-1">
+                                    <FaPlus size={18} />
+                                    <span className="hidden md:flex">Add Item</span>
+                                </button>
+
+                                {/* MY ORDER */}
+                                <>
+                                <button className="hidden md:block cursor-pointer px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d]
+                                text-sm font-medium">Pending Orders</button>
+                                <span className="hidden md:block absolute right-[-9px] top-[-12px] text-[#ff4d3d]">0</span>
+                                </>
+                                </div>
+                                
+                                :
+
+                                <div className="flex items-center gap-5">
+                                <FaShoppingCart size={25} className="text-[#ff4d2d]"/>
+                                <span className="absolute right-[-9px] top-[-12px] text-[#ff4d3d]">0</span>
+                                {/* MY ORDER */}
+                                <button className="hidden md:block cursor-pointer px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d]
+                                text-sm font-medium">My Order</button>
+                                </div>
+                            }
+                            
                         </div>
 
-                        {/* MY ORDER */}
-                        <button className="hidden md:block cursor-pointer px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d]
-                        text-sm font-medium">My Order</button>
+                        
 
                         {/* PROFILE */}
                         <div className="cursor-pointer" onClick={() => setShowInfo((prev)=>!prev)}>
@@ -74,9 +119,11 @@ function Navbar() {
                         {
                             showInfo && 
                             <div className=" fixed top-[80px] right-5 w-[200px] bg-white shadow-lg rounded-lg p-4 items-center flex flex-col gap-[10px] z-[9999]">
-                            <p className="">{userData?.username || "User"}</p>
-                            <div className="">My Order</div>
-                            <div className="text-[#ff4d2d]">Log Out</div>
+                            <p className="cursor-pointer">{userData?.username || "User"}</p>
+                            <div className="cursor-pointer">My Order</div>
+                            <div className="cursor-pointer text-[#ff4d2d]" onClick={onLogoutClick}>
+                                Log Out
+                            </div>
                             </div>
                         }                
 

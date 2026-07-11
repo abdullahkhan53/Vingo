@@ -12,7 +12,7 @@ export const handleGoogleAuth = async(data, dispatch) => {
         {withCredentials: true}
         )
         dispatch(setUserData(result.data))
-        console.log(result);
+        console.log(result.data);
 
     } catch (error) {
         console.log("Status : 401  ---  Error in handle google auth", error)

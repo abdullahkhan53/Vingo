@@ -55,7 +55,7 @@ function SignIn() {
                 const userData = {
                     email : popUp.user.email,
                 }
-                const response = await handleGoogleAuth(userData);
+                const response = await handleGoogleAuth(userData, dispatch);
             } catch (error) {
                 return setErr(error.response.data.message)
             }
