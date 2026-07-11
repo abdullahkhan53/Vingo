@@ -1,10 +1,10 @@
 import express from "express";
-import { createShop } from "../controller/shopController";
-import isAuth from "../middlewares/isAuth";
+import { createShop } from "../controller/shopController.js";
+import isAuth from "../middlewares/isAuth.js";
 import upload from "../middlewares/multer.js";
 import { createItem } from "../controller/itemController.js";
-const router = express.Router();
+const itemRouter = express.Router();
 
-router.post("/create-item",isAuth, upload.single("image"), createItem);
+itemRouter.post("/create-item",isAuth, upload.single("image"), createItem);
 
-export default router;
+export default itemRouter;

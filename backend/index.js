@@ -2,12 +2,12 @@ import express from "express";
 import "dotenv/config";
 import connectDb from "./config/db.js";
 import cookieParser from "cookie-parser";
-import Authrouter from "./routes/authRoutes.js";
-import Userrouter from "./routes/userRoutes.js";
-import Shoprouter from "./routes/shopRoutes.js";
-import Itemrouter from "./routes/itemRoutes.js";
 import cors from "cors";
 import User from "./models/userModel.js";
+import authRouter from "./routes/authRoutes.js";
+import userRouter from "./routes/userRoutes.js";
+import shopRouter from "./routes/shopRoutes.js";
+import itemRouter from "./routes/itemRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -23,10 +23,10 @@ app.use(cors({
 }))
 
 // Routes ------
-app.use("/api/auth", Authrouter);
-app.use("/api/user", Userrouter);
-app.use("/api/shop", Shoprouter);
-app.use("/api/item", Itemrouter);
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("/api/shop", shopRouter);
+app.use("/api/item", itemRouter);
 
 
 

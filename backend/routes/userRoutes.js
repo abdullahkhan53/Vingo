@@ -3,8 +3,8 @@ import isAuth from "../middlewares/isAuth.js";
 import { getCurrUser } from "../controller/userController.js";
 
 
-const router = express.Router()
+const userRouter = express.Router()
 
-router.get("/current", isAuth, getCurrUser );
+userRouter.get("/current", isAuth, getCurrUser );
 
-export default router;
+export default userRouter;

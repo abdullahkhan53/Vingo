@@ -26,3 +26,18 @@ export const createShop = async(req, res) => {
         return res.status(500).json({message: "something went wrong in createShop", err})
     }
 }
+
+export const getMyShop = async(req,res) => {
+    try{
+        const shop = await Shop.findOne({owner: req.userId}).populate("owner", "items");
+        if(!shop){
+            res.status(404).json({message: "Shop not found"});
+            return null;
+        }
+        return res.status(200).json({messag: "Shop found", shop})
+    }
+    catch(err) {
+        res.status(500).json({message: "something went wrong in getMyShop", err})
+    }
+
+}
