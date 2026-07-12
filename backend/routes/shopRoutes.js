@@ -7,4 +7,4 @@ const shopRouter = express.Router();
 shopRouter.post("/create-shop",isAuth, upload.single("image"), createShop);
 shopRouter.get("/get-my", isAuth, getMyShop);
 
-export default shopRouter;
+export default shopRouter
