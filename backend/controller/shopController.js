@@ -29,7 +29,7 @@ export const createShop = async(req, res) => {
 
 export const getMyShop = async(req,res) => {
     try{
-        const shop = await Shop.findOne({owner: req.userId}).populate("owner", "items");
+        const shop = await Shop.findOne({owner: req.userId}).populate("owner");
         if(!shop){
             res.status(404).json({message: "Shop not found"});
             return null;
