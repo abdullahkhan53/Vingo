@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 
 function Navbar() {
     const {userData, city} = useSelector(state => state.user);
+    const {myShopData} = useSelector(state => state.owner);
     const dispatch = useDispatch();
     const [showInfo, setShowInfo] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
@@ -24,7 +25,7 @@ function Navbar() {
     return(
         <>
             <div className="w-full h-[80px] flex items-center justify-between md:justify-center gap-[30px]
-                px-[20px] fixed top-5 z-[9999]  overflow-visible ">
+                px-[20px] fixed top-0 z-[9999] bg-[#fff9f6] overflow-visible ">
 
                     <h1 className="text-3xl font-bold mb-2 text-[#ff4d2d]">Vingo</h1>
                     {
@@ -80,12 +81,14 @@ function Navbar() {
                                 userData.role == "owner" ?
 
                                 <div className="flex items-center gap-5">
-                                <button className="flex items-center bg-[#ff4d2d] text-white p-2 rounded-lg gap-1">
+                                {
+                                    myShopData && <button className="flex items-center bg-[#ff4d2d] text-white p-2 rounded-lg gap-1">
                                     <FaPlus size={18} />
                                     <span className="hidden md:flex">Add Item</span>
-                                </button>
+                                    </button>
+                                }
 
-                                {/* MY ORDER */}
+                                {/* MY PENDING ORDER */}
                                 <>
                                 <button className="hidden md:block cursor-pointer px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d]
                                 text-sm font-medium">Pending Orders</button>

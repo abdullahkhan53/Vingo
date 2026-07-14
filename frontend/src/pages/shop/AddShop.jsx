@@ -1,0 +1,119 @@
+import { IoIosArrowRoundBack } from "react-icons/io";
+import { ImSpoonKnife } from "react-icons/im";
+import { useNavigate } from "react-router-dom";
+import {useSelector} from "react-redux";
+import { useState } from "react";
+
+function AddShop() {
+    
+    const {myShopData} = useSelector(state => state.owner)
+    const {currCity, currState, currAddress} = useSelector(state => state.user)
+    const navigate = useNavigate()
+    const [name, setName] = useState("")
+    const [city, setCity] = useState(currCity? currCity : "")
+    const [state, setState] = useState(currState? currState : "")
+    const [address, setAddress] = useState(currAddress? currAddress : "")
+
+    return(
+        <div className="w-full min-h-screen bg-[#fff9f6] flex flex-col items-center gradient-to-b from-[#fff9f6] to-[#fff9f6]">     
+
+                <div className="flex items-center  p-4 sm:p-6 gap-5 absolute top-10 left-10">
+                    <IoIosArrowRoundBack size={30} className="text-[#ff4d2d] cursor-pointer" 
+                    onClick={() => navigate("/")}/>
+                    
+                </div>
+                <div className="flex flex-col   bg-white mt-[100px] p-4 sm:p-6 w-full max-w-lg rounded-lg shadow-lg rounded-2xl border border-gray-200">
+                    <div className="flex flex-col items-center mb-6">
+                        <div className="bg-orange-100 p-4 rounded-full  mb-4">
+                            <ImSpoonKnife className="text-[#ff4d2d] w-16 h-16"/>
+                        </div>
+                        <div>
+                            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 ">Add Your Restaurant</h2>
+                        </div>
+                    </div>
+                <form action="">
+
+                    <div className="">
+                        <p className="text-[#ff4d2d] italic mb-8">Please fill in the details below to add your restaurant.</p>
+                    </div> 
+
+                        {/* Shop Name */}
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="shopName">
+                            Shop Name
+                        </label>
+                        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700
+                               leading-tight outline-none transition-all duration-200 hover:border-[#ff4d2d] 
+                               focus:border-[#ff4d2d] border-none " 
+                               id="shopName" type="text" placeholder="Enter your shop name"/>
+                    </div>
+
+                         {/* Shop Image */}
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="shopName">
+                            Image
+                        </label>
+                        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700
+                               leading-tight outline-none transition-all duration-200 hover:border-[#ff4d2d] 
+                               focus:border-[#ff4d2d] border-none" 
+                               id="shopName" type="file" />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                         {/* Shop City */}
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="shopCity">
+                            City
+                        </label>
+                        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700
+                               leading-tight outline-none transition-all duration-200 hover:border-[#ff4d2d] 
+                               focus:border-[#ff4d2d] border-none" 
+                               id="shopCity" type="text" placeholder="Enter your City"
+                               onChange={(e) => setCity(e.target.value)}
+                               value={city}
+                               />
+                    </div>
+
+                         {/* Shop State */}
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="shopState">
+                            State
+                        </label>
+                        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700
+                               leading-tight outline-none transition-all duration-200 hover:border-[#ff4d2d] 
+                               focus:border-[#ff4d2d] border-none" 
+                               id="shopState" type="text" placeholder="Enter your State"
+                               onChange={(e) => setState(e.target.value)}
+                               value={state}
+                               />
+                    </div>
+                    </div>
+
+                     {/* Shop Address */}
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="shopAddress">
+                            Address
+                        </label>
+                        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700
+                               leading-tight outline-none transition-all duration-200 hover:border-[#ff4d2d] 
+                               focus:border-[#ff4d2d] border-none" 
+                               id="shopAddress" type="text" placeholder="Enter your Address"
+                               onChange={(e) => setAddress(e.target.value)}
+                               value={address}
+                               />
+                    </div>
+
+                    <button className="bg-[#ff4d2d] text-white py-2 px-5 sm:px-6 rounded-full hover:bg-orange-600
+                    transition-colors duration-200 cursor-pointer"
+                    type="submit"
+                    >Submit</button>
+
+
+                </form>
+                    
+                </div>
+        </div>
+    )
+}
+
+export default AddShop;

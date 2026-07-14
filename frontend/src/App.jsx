@@ -6,12 +6,15 @@ import useGenCurrUser from './hooks/useGenCurrUser'
 import {useSelector} from "react-redux";
 import Home from './pages/Home'
 import useGetCity from './hooks/useGetCity'
+import useGetMyShop from './hooks/useGetMyShop'
+import AddShop from './pages/shop/AddShop'
 // import UserDashboard from './components/UserDashboard'
 
 function App() {
 
   useGenCurrUser()
   useGetCity()
+  useGetMyShop()
   const userData = useSelector((state) => state.user?.userData);
 
   return (
@@ -21,6 +24,7 @@ function App() {
       <Route path="/signIn" element={userData ? <Home/> : <SignIn/>}/>
       <Route path="/forgot-password" element={!userData? <ForgotPassword/> : <Home/>}/>
       <Route path="/" element={userData? <Home/> : <SignIn/>}/>
+      <Route path="/create-shop" element={userData? <AddShop/> : <Home/>}/>
       {/* <Route path="/user" element={<UserDashboard/>}/> */}
 
     </Routes>

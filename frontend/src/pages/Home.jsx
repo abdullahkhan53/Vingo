@@ -3,16 +3,16 @@ import {useSelector} from "react-redux";
 import UserDashboard from "../components/UserDashboard";
 import OwnerDashboard from "../components/OwnerDashboard";
 import DeliveryBoyDashboard from "../components/DeliveryBoyDashboard";
-import Navbar from "../components/Navbar";
 
 function  Home() {
     const userData = useSelector(state=>state.user?.userData);
+    // const myShopData = useSelector(state=>state.owner);
     return(
-        <div className="w-full h-full bg-[#fff9f6]s">
-        <Navbar/>
-        {userData.role == "user" && <UserDashboard/>}
-        {userData.role == "owner" && <OwnerDashboard/>}
-        {userData.role == "deliveryBoy" && <DeliveryBoyDashboard/>}
+        <div className="w-[100vw] min-h-[100vh] pt-100px flex flex-col items-center bg-[#fff9f6]">
+        
+        {userData?.role == "user" && <UserDashboard/>}
+        {userData?.role == "owner" && <OwnerDashboard/>}
+        {userData?.role == "deliveryBoy" && <DeliveryBoyDashboard/>}
         </div>
     )
 }
