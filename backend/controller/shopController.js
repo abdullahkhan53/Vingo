@@ -1,9 +1,14 @@
 import Shop from "../models/shopModel.js";
 import {cloudinary} from "../config/cloudinary.js"
 
-export const createShop = async(req, res) => {
+export const createEditShop = async(req, res) => {
     try{
         const {name, city, state, address} = req.body;
+        let shop = await Shop.findOne({owner: req.userId})
+        if(shop){
+           let result = await shop.findOneAndUpdate({owner: req.userId}, {name, city, state, address, image}, {new: true});
+           return res.status(200).json({message: "shop updated successfully", result})
+        }
         let image = {};
         if(req.file){
             const result = await cloudinary.uploader.upload_stream(req.file.path)
@@ -12,7 +17,7 @@ export const createShop = async(req, res) => {
             url: result.secure_url,
             fileName: result.public_id
         }
-        const shop = await Shop.create({
+        shop = await Shop.create({
             name,
             image,
             state,
