@@ -21,7 +21,7 @@ function OwnerDashboard() {
                             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-8">Add Your Restaurant</h2>
                             <button className="bg-[#ff4d2d] text-white py-2 px-5 sm:px-6 rounded-full hover:bg-orange-600
                             transition-colors duration-200 cursor-pointer"
-                            onClick={() => navigate("/create-shop")}>Get Started</button>
+                            onClick={() => navigate("/create-edit-shop")}>Get Started</button>
                     </div>
 
                 </div>

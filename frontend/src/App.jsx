@@ -24,7 +24,7 @@ function App() {
       <Route path="/signIn" element={userData ? <Home/> : <SignIn/>}/>
       <Route path="/forgot-password" element={!userData? <ForgotPassword/> : <Home/>}/>
       <Route path="/" element={userData? <Home/> : <SignIn/>}/>
-      <Route path="/create-shop" element={userData? <AddShop/> : <Home/>}/>
+      <Route path="/create-edit-shop" element={userData? <AddShop/> : <Home/>}/>
       {/* <Route path="/user" element={<UserDashboard/>}/> */}
 
     </Routes>
