@@ -32,7 +32,8 @@ function AddShop() {
         e.preventDefault();
         try {
             if(!backendImage){
-                return res.status(400).json({message: "Image is required"});
+                alert("Image is required")
+                return;
             }
             const formData = new FormData();
             formData.append("name", name);
