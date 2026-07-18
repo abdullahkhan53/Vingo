@@ -14,7 +14,11 @@ const uploadToCloudinary = (buffer) => {
             }
         );
         streamifier.createReadStream(buffer).pipe(uploadStream);
+        console.log("UPLOAD STREAM***")
+        console.log(uploadStream)
+        console.log("BUFFER***")
+        console.log(buffer)
     });
 };
 
-export default uploadToCloudinary;
+export  {uploadToCloudinary};

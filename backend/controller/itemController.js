@@ -1,6 +1,7 @@
 import Shop from "../models/shopModel.js";
 import Item from "../models/itemsSchema.js"
-import {cloudinary} from "../config/cloudinary.js"
+// import {cloudinary} from "../config/cloudinary.js"
+import {uploadToCloudinary} from "../utils/streamifier.js"
 
 export const createItem = async(req, res) => {
     try{
@@ -11,7 +12,7 @@ export const createItem = async(req, res) => {
             return res.status(400).json({message: "Shop not found"})
         }
         if(req.file){
-            const result = await cloudinary.uploader.upload_stream(req.file.path)
+            const result = await uploadToCloudinary(req.file.path)
         }
         image ={
             url: result.secure_url,
