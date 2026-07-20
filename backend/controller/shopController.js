@@ -28,11 +28,11 @@ export const createEditShop = async(req, res) => {
         }
 
         if(shop){
-            let updatedShop = await Shop.findOneAndUpdate({owner: req.userId}, updateFields, {new: true});
-            return res.status(201).json({message: "shop updated successfully", updatedShop})
+            let shop = await Shop.findOneAndUpdate({owner: req.userId}, updateFields, {new: true}).populate("owner items");
+            return res.status(201).json({message: "shop updated successfully", shop})
         }     
         
-        if(!req.file){
+        if(!req.file && !shop){
             return res.status(400).json({message: "Image is required"})
         }
 
@@ -44,6 +44,8 @@ export const createEditShop = async(req, res) => {
             address,
             owner: req.userId
         });
+        await shop.populate("owner items");
+        // await shop.save();
         return res.status(200).json({message: "shop Created Successfully", shop})
     } 
     catch(err) {
@@ -57,7 +59,7 @@ export const getMyShop = async(req,res) => {
         if(!shop){
            return res.status(404).json({message: "Shop not found"});
         }
-        return res.status(201).json({messag: "Shop found", shop})
+           return res.status(200).json({message: "Shop found", shop})
     }
     catch(err) {
         console.log(err)

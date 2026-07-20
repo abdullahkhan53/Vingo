@@ -32,10 +32,10 @@ const shopSchema = new Schema({
         type: String,
         required: true
     },
-    items:{
+    items:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Item"
-    }
+    }]
 });
 
 const Shop = mongoose.model("Shop", shopSchema);

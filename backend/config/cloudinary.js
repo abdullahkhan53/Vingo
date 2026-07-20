@@ -15,9 +15,6 @@ cloudinary.api.ping()
 
 console.log("Cloudinary initialized successfully.");
 
-cloudinary.uploader.upload("./config/frame.jpg")
-  .then(res => console.log("UPLOAD SUCCESS:", res.secure_url))
-  .catch(err => console.log("UPLOAD ERROR FULL:", JSON.stringify(err, null, 2)));
 
   
 export {

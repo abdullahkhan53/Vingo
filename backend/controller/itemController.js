@@ -11,13 +11,14 @@ export const createItem = async(req, res) => {
         if(!shop){
             return res.status(400).json({message: "Shop not found"})
         }
-        if(req.file){
-            const result = await uploadToCloudinary(req.file.path)
+            if(req.file){
+                const result = await uploadToCloudinary(req.file.buffer)
+                image ={
+                url: result.secure_url,
+                fileName: result.public_id
+            }
         }
-        image ={
-            url: result.secure_url,
-            fileName: result.public_id
-        }
+        
         const item = await Item.create({
             name, 
             image,
@@ -26,8 +27,13 @@ export const createItem = async(req, res) => {
              foodType,
              shop: shop._id
         })
+
+        await shop.items.push(item._id);
+        await shop.save();
+        await shop.populate("items owner");
+
         console.log(item);
-        res.status(201).json({message: "Item created successfully", item})
+        res.status(201).json({message: "Item created successfully", shop})
     }
     catch(err) {
         console.error(err);
