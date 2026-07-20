@@ -41,12 +41,10 @@ cd Vingo
 # Backend
 cd backend
 npm install
-npm run dev
 
 # Frontend
 cd frontend
 npm install
-npm run dev
 ```
 
 Create a `.env` file in the server directory with:
