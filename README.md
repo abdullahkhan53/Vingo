@@ -51,16 +51,19 @@ npm run dev
 
 Create a `.env` file in the server directory with:
 
-```
+``` 
 MONGO_URI=your_mongodb_connection_string
+DB_PASS=your_db_password
+DB_USER_NAME=your_db_username
 JWT_SECRET=your_jwt_secret
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_KEY=your_api_key
-CLOUDINARY_SECRET=your_api_secret
-EMAIL_USER=your_email
+VITE_FB_API=your_firebase_api
+VITE_GEOAPIFYKEY=your_geoapify_key
+CLOUD_NAME=your_cloud_name
+CLOUD_API_KEY=your_api_key
+CLOUD_API_SECRET=your_api_secret
+EMAIL=your_email
 EMAIL_PASS=your_email_app_password
+
 ```
 
 Run the app:
