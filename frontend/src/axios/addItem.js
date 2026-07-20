@@ -4,9 +4,9 @@ import { setMyShopData } from "../redux/ownerSlice.js";
 const serverUrl = "http://localhost:3000"
 
 
-export const handleAddEditShop = async(formData, dispatch) => {
+export const handleAddItem = async(formData, dispatch) => {
     try{
-        const result = await axios.post(`${serverUrl}/api/shop/create-edit-shop`,
+        const result = await axios.post(`${serverUrl}/api/item/add-item`,
             formData,
             {
                 headers: { 'Content-Type': 'multipart/form-data' },

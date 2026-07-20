@@ -8,6 +8,7 @@ import Home from './pages/Home'
 import useGetCity from './hooks/useGetCity'
 import useGetMyShop from './hooks/useGetMyShop'
 import AddShop from './pages/shop/AddShop'
+import AddItem from './pages/item/AddItem'
 // import UserDashboard from './components/UserDashboard'
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
       <Route path="/forgot-password" element={!userData? <ForgotPassword/> : <Home/>}/>
       <Route path="/" element={userData? <Home/> : <SignIn/>}/>
       <Route path="/create-edit-shop" element={userData? <AddShop/> : <Home/>}/>
+      <Route path="/add-item" element={userData? <AddItem/> : <Home/>}/>
       {/* <Route path="/user" element={<UserDashboard/>}/> */}
 
     </Routes>

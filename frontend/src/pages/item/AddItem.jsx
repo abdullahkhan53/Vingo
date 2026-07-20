@@ -3,20 +3,34 @@ import { ImSpoonKnife } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import {useSelector} from "react-redux";
 import { useState } from "react";
-import { handleAddEditShop } from "../../axios/addEditShop.js";
 import { useDispatch } from "react-redux";
+import { handleAddItem } from "../../axios/addItem.js";
 
-function AddShop() {
+function AddItem() {
     const dispatch = useDispatch();
     const {myShopData} = useSelector(state => state.owner)
-    const {currCity, currState, currAddress} = useSelector(state => state.user)
     const navigate = useNavigate()
+
     const [name, setName] = useState("")
-    const [city, setCity] = useState(myShopData?.city || currCity || "")
-    const [state, setState] = useState(myShopData?.state || currState || "")
-    const [address, setAddress] = useState(myShopData?.address || currAddress || "")
-    const [frontendImage, setFrontendImage] = useState(myShopData?.image?.url || null);
+    const [price, setPrice] = useState(0)
+    const [foodType, setFoodType] = useState("")
+    const [category, setCategory] = useState("");
+    const [frontendImage, setFrontendImage] = useState(null);
     const [backendImage, setBackendImage] = useState(null);
+
+    const categories = [
+            "Snack",
+            "Main Course",
+            "Deserts",
+            "Pizza",
+            "Burgers",
+            "Sandwiches",
+            "South Pakistani",
+            "North Pakistani",
+            "Chinees",
+            "Fast Food",
+            "Others"
+        ]
 
     const handleImage = (e) => {
         const file = e.target.files[0];
@@ -31,23 +45,23 @@ function AddShop() {
     const onFormSubmit = async(e) => {
         e.preventDefault();
         try {
-            // if(!backendImage){
-            //     alert("Image is required")
-            //     return;
-            // }
+            if(!backendImage){
+                alert("Image is required")
+                return;
+            }
             const formData = new FormData();
             formData.append("name", name);
-            formData.append("city", city);
-            formData.append("state", state);
-            formData.append("address", address);
             formData.append("image", backendImage);
+            formData.append("price", price);
+            formData.append("foodType", foodType);
+            formData.append("category", category);
 
-            let result = await  handleAddEditShop(formData, dispatch);
-            console.log("Shop added/edited successfully:", result);
+            let result = await  handleAddItem(formData, dispatch);
+            console.log("Item added successfully:", result);
 
         } catch(err) {
 
-            console.log("Error in adding/editing shop:", err);}
+            console.log("Error in adding/editing item:", err);}
     }
 
     return(
@@ -65,7 +79,7 @@ function AddShop() {
                         </div>
                         <div>
                             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 ">
-                                {myShopData ?  "Edit Your Shop" : "Add Your Restaurant"}
+                                Add Food
                             </h2>
                         </div>
                     </div>
@@ -78,12 +92,12 @@ function AddShop() {
                         {/* Shop Name */}
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="shopName">
-                            Shop Name
+                            Food Name
                         </label>
                         <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700
                                leading-tight outline-none transition-all duration-200 hover:border-[#ff4d2d] 
                                focus:border-[#ff4d2d] border-none " 
-                               id="shopName" type="text" placeholder="Enter your shop name"
+                               id="shopName" type="text" placeholder="Enter your Food name"
                                onChange={(e) => setName(e.target.value)}/>
                     </div>
 
@@ -106,47 +120,48 @@ function AddShop() {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                         {/* Shop City */}
+                         {/* Food Price */}
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2">
-                            City
+                            Price
                         </label>
                         <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700
                                leading-tight outline-none transition-all duration-200 hover:border-[#ff4d2d] 
                                focus:border-[#ff4d2d] border-none" 
-                               type="text" placeholder="Enter your City"
-                               onChange={(e) => setCity(e.target.value)}
-                               value={city}
+                               type="text"
+                               onChange={(e) => setPrice(e.target.value)}
+                               value={price}
                                />
                     </div>
 
-                         {/* Shop State */}
+                         {/* Food Type */}
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="shopState">
-                            State
+                            Food Type
                         </label>
-                        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700
+                        <select className="shadow appearance-none border rounded  w-full py-2 px-3 text-gray-700
                                leading-tight outline-none transition-all duration-200 hover:border-[#ff4d2d] 
                                focus:border-[#ff4d2d] border-none" 
-                               id="shopState" type="text" placeholder="Enter your State"
-                               onChange={(e) => setState(e.target.value)}
-                               value={state}
-                               />
+                               id="foodType" 
+                               onChange={(e) => setFoodType(e.target.value)}
+                               value={foodType}
+                               >
+                                <option value="veg">veg</option> 
+                                <option value="non-veg">non-veg</option> 
+                               </select>
                     </div>
                     </div>
 
-                     {/* Shop Address */}
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="shopAddress">
-                            Address
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="shopName">
+                            Select Category
                         </label>
-                        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700
-                               leading-tight outline-none transition-all duration-200 hover:border-[#ff4d2d] 
-                               focus:border-[#ff4d2d] border-none" 
-                               id="shopAddress" type="text" placeholder="Enter your Address"
-                               onChange={(e) => setAddress(e.target.value)}
-                               value={address}
-                               />
+                        <select className="w-full px-4 py-2 border-none focus:outline-none round-lg " value={category} onChange={(e) => setCategory(e.target.value)}>
+                            <option value="">Select a category</option>
+                            {categories.map((cate, index) => (
+                                <option value={cate} key={index}>{cate}</option>
+                            ))}
+                        </select>
                     </div>
 
                     <button className="bg-[#ff4d2d] text-white py-2 px-5 sm:px-6 rounded-full hover:bg-orange-600
@@ -162,4 +177,4 @@ function AddShop() {
     )
 }
 
-export default AddShop;
+export default AddItem;
