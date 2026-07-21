@@ -36,12 +36,12 @@ const itemSchema = new Schema({
             "Others"
         ],
         prcie:{
-            type: Number,
+            type: String,
             required: true
         },
         foodType:{
             type: String,
-            enum: ["Veg", "Non-Veg"],
+            enum: ["veg", "non-veg"],
             required: true  
         }
     },

@@ -32,7 +32,7 @@ export const createItem = async(req, res) => {
         await shop.save();
         await shop.populate("items owner");
 
-        console.log(item);
+        console.log(shop);
         res.status(201).json({message: "Item created successfully", shop})
     }
     catch(err) {
