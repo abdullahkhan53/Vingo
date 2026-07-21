@@ -67,7 +67,7 @@ EMAIL_PASS=your_email_app_password
 Run the app:
 
 ```bash
-# from /backend
+# from /backend (in a separate terminal)
 npm run dev
 
 # from /frontend (in a separate terminal)
