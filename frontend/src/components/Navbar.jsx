@@ -6,8 +6,10 @@ import { RxCross2 } from "react-icons/rx";
 import {useState} from "react";
 import { handleLogout } from "../axios/logout";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
+    const navigate = useNavigate()
     const {userData, city} = useSelector(state => state.user);
     const {myShopData} = useSelector(state => state.owner);
     const dispatch = useDispatch();
@@ -82,7 +84,9 @@ function Navbar() {
 
                                 <div className="flex items-center gap-5">
                                 {
-                                    myShopData && <button className="flex items-center bg-[#ff4d2d] text-white p-2 rounded-lg gap-1">
+                                    myShopData && 
+                                    <button className="flex items-center bg-[#ff4d2d] text-white p-2 rounded-lg gap-1 cursor-pointer hover:bg-orange-600 transition-colors duration-200"
+                                        onClick={() => navigate("/add-item")}>
                                     <FaPlus size={18} />
                                     <span className="hidden md:flex">Add Item</span>
                                     </button>

@@ -4,8 +4,7 @@ import { useSelector } from "react-redux";
 import { ImSpoonKnife } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import { FaPen } from "react-icons/fa";
-
-
+import ShopItem from "./item/ShopItem";
 
 function OwnerDashboard() {
     const {myShopData} = useSelector(state=>state.owner);
@@ -73,7 +72,17 @@ function OwnerDashboard() {
                     </div>
 
                 </div>
-            </div>
+                </div>
+            }
+
+            {
+                myShopData?.items?.length > 0 &&
+                
+                <div className="flex flex-col items-center w-full gap-3 mt-10 ">
+                    {
+                     myShopData.items.map((item, index) => <ShopItem data={item}  key={index} />)        
+                    }
+                </div>
             }
 
         </div>
