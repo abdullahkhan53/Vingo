@@ -34,18 +34,17 @@ const itemSchema = new Schema({
             "Chinees",
             "Fast Food",
             "Others"
-        ],
-        prcie:{
-            type: String,
-            required: true
-        },
-        foodType:{
-            type: String,
-            enum: ["veg", "non-veg"],
-            required: true  
-        }
+        ]
     },
-
+    price:{
+        type: String,
+        required: true
+    },
+    foodType:{
+        type: String,
+        enum: ["veg", "non-veg"],
+        required: true  
+    }
 
 })
 

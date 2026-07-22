@@ -1,6 +1,5 @@
 import Shop from "../models/shopModel.js";
 import Item from "../models/itemsSchema.js"
-// import {cloudinary} from "../config/cloudinary.js"
 import {uploadToCloudinary} from "../utils/streamifier.js"
 
 export const createItem = async(req, res) => {
@@ -23,9 +22,9 @@ export const createItem = async(req, res) => {
             name, 
             image,
             category,
-             price,
-             foodType,
-             shop: shop._id
+            price,
+            foodType,
+            shop: shop._id
         })
 
         await shop.items.push(item._id);
@@ -61,5 +60,18 @@ export const editItem = async(req,res) => {
     catch(err) {
         console.error(err);
         res.status(500).json({message: "Internal server error in Item Controller"})
+    }
+}
+
+export const deleteItem = async(req, res) => {
+    try {
+        let {itemId} = req.params;
+        if(!itemId){
+            return res.status(400).json({message: "Item ID is required"})
+        }
+        const item = await Item.findByIdAndDelete(itemId);
+        res.status(200).json({message: "Item deleted successfully", item})
+    } catch (error) {
+        return res.status(401).json({message: "something went wrong in deleting item", error})
     }
 }
