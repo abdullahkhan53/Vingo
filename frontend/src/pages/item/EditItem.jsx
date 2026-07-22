@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import {useSelector} from "react-redux";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { handleAddItem } from "../../axios/item.js";
+// import { handleEditItem } from "../../axios/editItem.js";
 
-function AddItem() {
+function EditItem() {
     const dispatch = useDispatch();
     const {myShopData} = useSelector(state => state.owner)
     const navigate = useNavigate()
@@ -56,7 +56,7 @@ function AddItem() {
             formData.append("foodType", foodType);
             formData.append("category", category);
 
-            let result = await  handleAddItem(formData, dispatch);
+            // let result = await  handleAddItem(formData, dispatch);
             console.log("Item added successfully:", result);
 
         } catch(err) {
@@ -177,4 +177,4 @@ function AddItem() {
     )
 }
 
-export default AddItem;
+export default EditItem;

@@ -18,3 +18,13 @@ export const handleAddItem = async(formData, dispatch) => {
         throw err;
     }
 }
+export const handleDeleteItem = async(itemId) => {
+    try{
+        const result = await axios.post(`${serverUrl}/api/item/delete-item/${itemId}`,
+            {}, { withCredentials: true}
+        )
+        // dispatch(setMyShopData(result.data.shop))
+    } catch(err) {
+        throw err;
+    }
+}
