@@ -1,12 +1,13 @@
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { ImSpoonKnife } from "react-icons/im";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {useSelector} from "react-redux";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-// import { handleEditItem } from "../../axios/editItem.js";
+import { handleGetItemById } from "../../axios/item.js";
 
 function EditItem() {
+    const {itemId} = useParams();
     const dispatch = useDispatch();
     const {myShopData} = useSelector(state => state.owner)
     const navigate = useNavigate()
@@ -64,6 +65,21 @@ function EditItem() {
             console.log("Error in adding/editing item:", err);}
     }
 
+    useEffect( () => {
+        const response = async() => {
+            const data = await handleGetItemById(itemId)
+            return data;
+        }
+        response().then(data => {
+            setName(data.name);
+            setPrice(data.price);
+            setFoodType(data.foodType);
+            setCategory(data.category);
+            setFrontendImage(data.image.url);
+            console.log("data from edit item page", data)
+        }).catch(err => console.log(err))
+    }, [itemId] )
+
     return(
         <div className="w-full min-h-screen bg-[#fff9f6] flex flex-col items-center gradient-to-b from-[#fff9f6] to-[#fff9f6]">     
 
@@ -79,7 +95,7 @@ function EditItem() {
                         </div>
                         <div>
                             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 ">
-                                Add Food
+                                Edit Food
                             </h2>
                         </div>
                     </div>
@@ -89,7 +105,7 @@ function EditItem() {
                         <p className="text-[#ff4d2d] italic mb-8">Please fill in the details below to add your restaurant.</p>
                     </div> 
 
-                        {/* Shop Name */}
+                        {/* Food Name */}
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="shopName">
                             Food Name
@@ -98,7 +114,9 @@ function EditItem() {
                                leading-tight outline-none transition-all duration-200 hover:border-[#ff4d2d] 
                                focus:border-[#ff4d2d] border-none " 
                                id="shopName" type="text" placeholder="Enter your Food name"
-                               onChange={(e) => setName(e.target.value)}/>
+                               onChange={(e) => setName(e.target.value)}
+                               value={name}
+                               />
                     </div>
 
                          {/* Shop Image */}

@@ -28,3 +28,14 @@ export const handleDeleteItem = async(itemId) => {
         throw err;
     }
 }
+
+export const handleGetItemById = async(itemId) => {
+    try {
+        const result = await axios.get(`${serverUrl}/api/item/get-item-by-id/${itemId}`,
+            { withCredentials: true }
+        );
+        return result.data.item;
+    } catch(err) {
+        throw err;
+    }
+}

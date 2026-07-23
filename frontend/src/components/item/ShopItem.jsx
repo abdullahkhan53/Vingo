@@ -1,8 +1,10 @@
 import React from "react";
 import { FaPen, FaTrashAlt  } from "react-icons/fa";
 import { handleDeleteItem } from "../../axios/item.js";
+import { useNavigate } from "react-router-dom";
 
 function ShopItem({ data }) {
+    const navigate = useNavigate();
 
     const onHandleDeleteItem = async() => {
         try{

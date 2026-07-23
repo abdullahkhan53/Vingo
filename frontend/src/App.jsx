@@ -27,7 +27,7 @@ function App() {
       <Route path="/forgot-password" element={!userData? <ForgotPassword/> : <Home/>}/>
       <Route path="/" element={userData? <Home/> : <SignIn/>}/>
       <Route path="/create-edit-shop" element={userData? <AddShop/> : <Home/>}/>
-      <Route path="/add-item" element={userData? <AddItem/> : <Home/>}/>
+      <Route path="/add-item" element={userData? <AddItem/> : <Home/>}/>  
       <Route path="/edit-item/:itemId" element={userData? <EditItem/> : <Home/>}/>
       {/* <Route path="/delete-item/:itemId"/> */}
       {/* <Route path="/user" element={<UserDashboard/>}/> */}
