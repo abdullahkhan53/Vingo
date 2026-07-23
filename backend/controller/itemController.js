@@ -47,19 +47,22 @@ export const editItem = async(req,res) => {
         let image = {};
         if(req.file){
             const result = await cloudinary.uploader.upload_stream(req.file.path)
-        }
-        image ={
-            url: result.secure_url,
-            fileName: result.public_id
+            image ={
+                url: result.secure_url,
+                fileName: result.public_id
+            }
         }
         const item = await Item.findByIdAndUpdate(itemId, {
             name, category,  price, foodType, image,
         }, {new: true})
-        res.status(200).json({message: "Item updated successfully", item})
+        if(!item) {
+            return res.status(404).json({message: "Item not found"});
+        }
+        return res.status(200).json({message: "Item updated successfully", item})
     }
     catch(err) {
         console.error(err);
-        res.status(500).json({message: "Internal server error in Item Controller"})
+        return res.status(500).json({message: "Internal server error in Item Controller", err})
     }
 }
 
@@ -73,5 +76,18 @@ export const deleteItem = async(req, res) => {
         res.status(200).json({message: "Item deleted successfully", item})
     } catch (error) {
         return res.status(401).json({message: "something went wrong in deleting item", error})
+    }
+}
+
+export const getItemById = async(req, res) => {
+    try {
+        let {itemId} = req.params;
+        if(!itemId){
+            return res.status(400).json({message: "Item ID is required"})
+        }
+        const item = await Item.findById(itemId);
+        return res.status(200).json({message: "Item Fetched Successfully", item});
+    } catch(err) {
+        return res.status(500).json({message: "Internal server error in fetching item", err})
     }
 }
