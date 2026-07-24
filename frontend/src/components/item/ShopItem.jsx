@@ -20,7 +20,7 @@ function ShopItem({ data }) {
             <div className="w-full max-w-2xl flex  bg-white shadow-lg rounded-lg
                  overflow-hidden border border-orange-200 px-4 py-3 relative">
                     
-                    <div className="absolute top-5 right-5 flex gap-4 items-center justify-center">
+                    <div className="absolute bottom-5 right-5 flex gap-4 items-center justify-center">
                     {/* Delete Icon */}
                     <div className=" cursor-pointer rounded-full bg-orange-200 p-2">
                         <FaTrashAlt  size={15} className="text-[#ff4d2d]"
@@ -34,7 +34,10 @@ function ShopItem({ data }) {
                     </div>
                     
                 <div className="w-35 h-32 flex-shrink-0 bg-gray-50 overflow-hidden">
-                    <img src={data.image.url} alt={data.name} className="w-full h-full object-cover" />
+                    {
+                        data.image &&
+                        <img src={data.image.url} alt={data.name} className="w-full h-full object-cover" />
+                    }
                 </div>
                 <div className="flex flex-col justify-between p-3 px-5 flex-1">
                     <div>

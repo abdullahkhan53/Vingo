@@ -39,3 +39,15 @@ export const handleGetItemById = async(itemId) => {
         throw err;
     }
 }
+
+export const handleEditItem = async(itemId, formData, dispatch ) => {
+    try{
+        const result = await axios.post(`${serverUrl}/api/item/edit-item/${itemId}`,
+            formData,
+            {withCredentials: true}
+        );
+        dispatch(setMyShopData(result.data.shop))
+    } catch(err) {
+        throw err;
+    }
+}

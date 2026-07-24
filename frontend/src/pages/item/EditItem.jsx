@@ -4,7 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import {useSelector} from "react-redux";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { handleGetItemById } from "../../axios/item.js";
+import { handleEditItem, handleGetItemById } from "../../axios/item.js";
+import { ClipLoader } from "react-spinners";
 
 function EditItem() {
     const {itemId} = useParams();
@@ -18,6 +19,7 @@ function EditItem() {
     const [category, setCategory] = useState("");
     const [frontendImage, setFrontendImage] = useState(null);
     const [backendImage, setBackendImage] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const categories = [
             "Snack",
@@ -46,10 +48,11 @@ function EditItem() {
     const onFormSubmit = async(e) => {
         e.preventDefault();
         try {
-            if(!backendImage){
-                alert("Image is required")
-                return;
-            }
+            // if(!backendImage){
+            //     alert("Image is required")
+            //     return;
+            // }
+            setLoading(true);
             const formData = new FormData();
             formData.append("name", name);
             formData.append("image", backendImage);
@@ -57,11 +60,13 @@ function EditItem() {
             formData.append("foodType", foodType);
             formData.append("category", category);
 
-            // let result = await  handleAddItem(formData, dispatch);
+            let result = await  handleEditItem(itemId, formData, dispatch);
+            setLoading(false);
+            navigate("/");
             console.log("Item added successfully:", result);
 
         } catch(err) {
-
+            setLoading(false);
             console.log("Error in adding/editing item:", err);}
     }
 
@@ -185,7 +190,10 @@ function EditItem() {
                     <button className="bg-[#ff4d2d] text-white py-2 px-5 sm:px-6 rounded-full hover:bg-orange-600
                     transition-colors duration-200 cursor-pointer"
                     type="submit"
-                    >Submit</button>
+                    disabled={loading}
+                    >
+                        {loading? <ClipLoader size={15} text-white/> : "Edit Food"}
+                    </button>
 
 
                 </form>
