@@ -46,7 +46,7 @@ export const editItem = async(req,res) => {
         const {name, category,  price, foodType} = req.body; 
         let image = {};
         if(req.file){
-            const result = await cloudinary.uploader.upload_stream(req.file.path)
+            const result = await uploadToCloudinary(req.file.buffer)
             image ={
                 url: result.secure_url,
                 fileName: result.public_id
@@ -57,8 +57,10 @@ export const editItem = async(req,res) => {
         }, {new: true})
         if(!item) {
             return res.status(404).json({message: "Item not found"});
-        }
-        return res.status(200).json({message: "Item updated successfully", item})
+        };
+        const shop = await Shop.findOne({owner: req.userId}).populate("items owner");
+
+        return res.status(200).json({message: "Item updated successfully", shop})
     }
     catch(err) {
         console.error(err);
