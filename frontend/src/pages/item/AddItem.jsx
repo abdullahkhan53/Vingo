@@ -5,6 +5,7 @@ import {useSelector} from "react-redux";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { handleAddItem } from "../../axios/item.js";
+import { ClipLoader } from "react-spinners";
 
 function AddItem() {
     const dispatch = useDispatch();
@@ -17,6 +18,7 @@ function AddItem() {
     const [category, setCategory] = useState("");
     const [frontendImage, setFrontendImage] = useState(null);
     const [backendImage, setBackendImage] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const categories = [
             "Snack",
@@ -44,6 +46,7 @@ function AddItem() {
 
     const onFormSubmit = async(e) => {
         e.preventDefault();
+        setLoading(true)
         try {
             if(!backendImage){
                 alert("Image is required")
@@ -57,10 +60,12 @@ function AddItem() {
             formData.append("category", category);
 
             let result = await  handleAddItem(formData, dispatch);
+            setLoading(false);
+            navigate("/")
             console.log("Item added successfully:", result);
-
+            
         } catch(err) {
-
+            setLoading(false);
             console.log("Error in adding/editing item:", err);}
     }
 
@@ -167,7 +172,10 @@ function AddItem() {
                     <button className="bg-[#ff4d2d] text-white py-2 px-5 sm:px-6 rounded-full hover:bg-orange-600
                     transition-colors duration-200 cursor-pointer"
                     type="submit"
-                    >Submit</button>
+                    disabled={loading}
+                    >
+                        {loading? <ClipLoader size={20} color={"#ffffff"} /> :  "Add Food"}
+                    </button>
 
 
                 </form>

@@ -32,7 +32,7 @@ function Navbar() {
                     <h1 className="text-3xl font-bold mb-2 text-[#ff4d2d]">Vingo</h1>
                     {
                         userData.role == "user" &&
-                        <div className="md:w-[60%] lg-w[40%] h-[70px] bg-white shadow-xl rounded-lg hidden md:flex items-center gap-[20px]">
+                        <div className="md:w-[60%] lg-w[40%] h-[70px] bg-white shadow-xl rounded-lg hidden md:flex  items-center gap-[20px]">
 
                         {/* CITY SECTION */}
                         <div className="w-[30%] h-full flex items-center justify-center overflow-hidden gap-[10px] px-[10px] border-r[2px] border-gray-400 ">
@@ -41,7 +41,7 @@ function Navbar() {
                         </div>
 
                         {/* SEARCH SECTION */}
-                        <div className="w-[80%]  flex items-center justify-center gap-[10px] ">
+                        <div className="w-[80%]  flex items-center  gap-[10px] ">
                             <CiSearch size={25} className="text-[#ff4d2d]"/>
                             <input type="text" placeholder="Search Delecious Food..." className="outline-none border-none bg-transparent placeholder:text-gray-500" />
                         </div>
@@ -127,7 +127,7 @@ function Navbar() {
                             showInfo && 
                             <div className=" fixed top-[80px] right-5 w-[200px] bg-white shadow-lg rounded-lg p-4 items-center flex flex-col gap-[10px] z-[9999]">
                             <p className="cursor-pointer">{userData?.username || "User"}</p>
-                            <div className="cursor-pointer">My Order</div>
+                            {userData?.role == "user" && <div className="cursor-pointer">My Order</div>}
                             <div className="cursor-pointer text-[#ff4d2d]" onClick={onLogoutClick}>
                                 Log Out
                             </div>
