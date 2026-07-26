@@ -71,11 +71,18 @@ export const editItem = async(req,res) => {
 export const deleteItem = async(req, res) => {
     try {
         let {itemId} = req.params;
+        const shop = await Shop.findOne({owner: req.useId});
         if(!itemId){
             return res.status(400).json({message: "Item ID is required"})
         }
         const item = await Item.findByIdAndDelete(itemId);
-        res.status(200).json({message: "Item deleted successfully", item})
+        shop.filter(i => i._id !== itemId);
+        await shop.save();
+        shop.populate("owner", {
+            path: "items",
+            options: {sort: {createdAt: -1}}
+        })
+        res.status(200).json({message: "Item deleted successfully", shop})
     } catch (error) {
         return res.status(401).json({message: "something went wrong in deleting item", error})
     }
