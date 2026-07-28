@@ -10,6 +10,7 @@ import useGetMyShop from './hooks/useGetMyShop'
 import AddShop from './pages/shop/AddShop'
 import AddItem from './pages/item/AddItem'
 import EditItem from './pages/item/EditItem'
+// import useGetShopsByCity from './hooks/useGetShopsByCity'
 // import UserDashboard from './components/UserDashboard'
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
   useGenCurrUser()
   useGetCity()
   useGetMyShop()
+  // useGetShopsByCity()
   const userData = useSelector((state) => state.user?.userData);
 
   return (

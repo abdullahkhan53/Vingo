@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 function Navbar() {
     const navigate = useNavigate()
-    const {userData, city} = useSelector(state => state.user);
+    const {userData, currCity} = useSelector(state => state.user);
     const {myShopData} = useSelector(state => state.owner);
     const dispatch = useDispatch();
     const [showInfo, setShowInfo] = useState(false);
@@ -37,7 +37,7 @@ function Navbar() {
                         {/* CITY SECTION */}
                         <div className="w-[30%] h-full flex items-center justify-center overflow-hidden gap-[10px] px-[10px] border-r[2px] border-gray-400 ">
                             <FaLocationDot size={25} className="text-[#ff4d2d]"/>
-                            <div className="w-[80%]  text-gray-600 flex justify-between">{city} <span>|</span></div>
+                            <div className="w-[80%]  text-gray-600 flex justify-between">{currCity} <span>|</span></div>
                         </div>
 
                         {/* SEARCH SECTION */}

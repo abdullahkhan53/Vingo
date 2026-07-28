@@ -3,7 +3,7 @@ import { ImSpoonKnife } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import {useSelector} from "react-redux";
 import { useState } from "react";
-import { handleAddEditShop } from "../../axios/addEditShop.js";
+import { handleAddEditShop } from "../../axios/shop.js";
 import { useDispatch } from "react-redux";
 
 function AddShop() {

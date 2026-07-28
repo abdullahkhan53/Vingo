@@ -2,10 +2,16 @@ import React, { useState, useEffect, useRef } from "react";
 import Category from "./category/Category";
 import { categories } from "../../utils/category.js";
 import { FaChevronCircleLeft, FaChevronCircleRight } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 import Navbar from "./Navbar";
+import ShopsByCity from "./shop/ShopsByCity.jsx";
+import ItemsByCity from "./item/ItemsByCity.jsx";
 
 function UserDashboard() {
+
+    const shops = useSelector(state => state.user.shopsByCity)
+    const {currCity} = useSelector(state => state.user)
 
     const cateScrollRef = useRef();
     const [isRightScroll, setIsRightScroll] = useState(false);
@@ -99,6 +105,39 @@ function UserDashboard() {
                         </button>
                     }
                 </div>
+
+            </div>
+
+            <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-[10px] mt-[110px]">
+                <h1 className="text-gray-800 text-4xl mb-4">Find Delicious fOOd in {currCity}!</h1>
+                
+                {/* ShopsByCity Component */}
+                    <div className="w-full flex items-center gap-4 overflow-x-auto  pb-2" ref={cateScrollRef}>
+                        {
+                            shops?.length > 0 ? 
+                            shops.map((shop, index) => {
+                                return <ShopsByCity data={shop} key={index}/>;
+                            }) : ""
+                        }
+                        </div>
+
+            </div>
+
+            <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-[10px] mt-[110px]">
+                <h1 className="text-gray-800 text-4xl mb-4">Suggested fOOd Items here ..</h1>
+                
+                {/* Items in current city Component */}
+                    <div className="w-full flex items-center gap-4 overflow-x-auto  pb-2" ref={cateScrollRef}>
+                        {
+                            shops?.length > 0 ? 
+                            shops.map((shop, shopIndex) => {
+                                return(
+                                shop.items?.map((item, itemIndex) => {
+                                    return <ItemsByCity data={item} key={itemIndex}/>;
+                                }))
+                            }) : ""
+                        }
+                        </div>
 
             </div>
 

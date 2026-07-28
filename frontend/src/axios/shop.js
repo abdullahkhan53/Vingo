@@ -18,3 +18,16 @@ export const handleAddEditShop = async(formData, dispatch) => {
         throw err;
     }
 }
+
+export const handleGetShopsByCity = async(city) => {
+    try {
+         const result = await axios.get(`${serverUrl}/api/shop/get-shops-by-city/${city}`,
+            {
+                withCredentials: true
+            }
+        )
+        return result.data.shops;
+    } catch (err) {
+        throw err;
+    }
+}
