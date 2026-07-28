@@ -56,7 +56,7 @@ export const createEditShop = async(req, res) => {
 export const getMyShop = async(req,res) => {
     try{
         const shop = await Shop.findOne({owner: req.userId})
-        await shop.populate("owner items");
+        await shop?.populate("owner items");
         if(!shop){
            return res.status(404).json({message: "Shop not found"});
         }
@@ -67,4 +67,21 @@ export const getMyShop = async(req,res) => {
         return res.status(500).json({message: "something went wrong in getMyShop", err})
     }
 
+}
+
+export const getShopsByCity = async(req, res) => {
+    try{
+        let {city} = req.params;
+        const shop = await Shop.find({city: city})
+        await shop.populate("owner items");
+
+        if(!shop) {
+            return res.status(400).json({message: "Shop not found in this city"})
+        }
+
+        return res.status(200).json("Shops found by city are :", shop);
+        
+    } catch(err) {
+        return res.status(400).json({message: "Error in getShopByCity", err});
+    }
 }
