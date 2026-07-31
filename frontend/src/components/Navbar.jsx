@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 function Navbar() {
     const navigate = useNavigate()
-    const {userData, currCity} = useSelector(state => state.user);
+    const {userData, currCity, cartItems} = useSelector(state => state.user);
     const {myShopData} = useSelector(state => state.owner);
     const dispatch = useDispatch();
     const [showInfo, setShowInfo] = useState(false);
@@ -102,9 +102,11 @@ function Navbar() {
                                 
                                 :
 
-                                <div className="flex items-center gap-5">
-                                <FaShoppingCart size={25} className="text-[#ff4d2d]"/>
-                                <span className="absolute right-[-9px] top-[-12px] text-[#ff4d3d]">0</span>
+                                <div className="flex items-center gap-5 ">
+                                <div className="relative cursor-pointer">
+                                    <FaShoppingCart size={25} className="text-[#ff4d2d]"/>
+                                    <span className="absolute right-[-9px] top-[-12px] text-[#ff4d3d]">{cartItems.length}</span>
+                                </div>
                                 {/* MY ORDER */}
                                 <button className="hidden md:block cursor-pointer px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d]
                                 text-sm font-medium">My Order</button>
