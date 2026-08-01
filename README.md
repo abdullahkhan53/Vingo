@@ -72,7 +72,7 @@ npm run dev
 
 # from /frontend (in a separate terminal)
 npm run dev
-```
+``
 
 ## Roadmap
 
