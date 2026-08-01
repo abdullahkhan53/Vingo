@@ -104,7 +104,8 @@ function Navbar() {
 
                                 <div className="flex items-center gap-5 ">
                                 <div className="relative cursor-pointer">
-                                    <FaShoppingCart size={25} className="text-[#ff4d2d]"/>
+                                    <FaShoppingCart size={25} className="text-[#ff4d2d]"
+                                     onClick={() => navigate("/cart")}/>
                                     <span className="absolute right-[-9px] top-[-12px] text-[#ff4d3d]">{cartItems.length}</span>
                                 </div>
                                 {/* MY ORDER */}

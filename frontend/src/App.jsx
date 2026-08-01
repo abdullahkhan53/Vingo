@@ -10,6 +10,7 @@ import useGetMyShop from './hooks/useGetMyShop'
 import AddShop from './pages/shop/AddShop'
 import AddItem from './pages/item/AddItem'
 import EditItem from './pages/item/EditItem'
+import Cart from './pages/item/Cart'
 // import useGetShopsByCity from './hooks/useGetShopsByCity'
 // import UserDashboard from './components/UserDashboard'
 
@@ -31,6 +32,7 @@ function App() {
       <Route path="/create-edit-shop" element={userData? <AddShop/> : <Home/>}/>
       <Route path="/add-item" element={userData? <AddItem/> : <Home/>}/>  
       <Route path="/edit-item/:itemId" element={userData? <EditItem/> : <Home/>}/>
+      <Route path="/cart" element={userData? <Cart/> : <SignIn/>}/>
       {/* <Route path="/delete-item/:itemId"/> */}
       {/* <Route path="/user" element={<UserDashboard/>}/> */}
 
