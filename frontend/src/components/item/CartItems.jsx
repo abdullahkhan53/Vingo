@@ -2,9 +2,23 @@ import React from 'react'
 import { TiMinus } from "react-icons/ti";
 import { FaPlus } from "react-icons/fa6";
 import { GoTrash } from "react-icons/go";
+import { setCartQuantity, removeFromCart } from '../../redux/userSlice';
+import { useDispatch } from 'react-redux';
 
 
 function CartItems({ data }) {
+
+    const dispatch = useDispatch();
+    const handleCartQuantityIncrease = (id, quantity) => {
+        dispatch(setCartQuantity({id, quantity: quantity + 1}));
+    }
+
+    const handleCartQuantityDecrease = (id, quantity) => {
+        if(quantity > 1) {
+        dispatch(setCartQuantity({id, quantity: quantity - 1}));
+        }
+    }
+
     return (
         <div className='w-full  bg-white shadow-lg rounded-lg flex items-center justify-between p-4 gap-2'>
             <div  className='flex items-center gap-4'>
@@ -20,13 +34,16 @@ function CartItems({ data }) {
 
             <div>
                  <div className="flex items-center justify-center gap-3  text-lg font-semibold">   
-                    <span className="p-1 bg-gray-300 text-white rounded-full cursor-pointer">
-                        <TiMinus size={16}/></span>
+                    <button className="p-1 bg-gray-300 text-white rounded-full cursor-pointer"
+                        onClick={() => handleCartQuantityDecrease(data?.id, data?.quantity)}>
+                        <TiMinus size={16}/></button>
                     <span className="text-[#ff4d2d]">{data.quantity}</span>
-                    <span className="p-1 bg-gray-300 text-white rounded-full cursor-pointer">
-                        <FaPlus size={16}/></span>
-                        <span className="text-[#ff4d2d] cursor-pointer space-left-2" >
-                            <GoTrash size={22}/></span>
+                    <button className="p-1 bg-gray-300 text-white rounded-full cursor-pointer"
+                        onClick={() => handleCartQuantityIncrease(data?.id, data?.quantity)}>
+                        <FaPlus size={16}/></button>
+                        <button className="text-[#ff4d2d] cursor-pointer space-left-2" 
+                         onClick={() => dispatch(removeFromCart(data?.id))}>
+                            <GoTrash size={22}/></button>
                 </div>
             </div>
 
