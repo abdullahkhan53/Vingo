@@ -44,7 +44,7 @@ npm install
 
 # Frontend
 cd frontend
-npm install
+npm insta
 ```
 
 Create a `.env` file in the server directory with:
