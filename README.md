@@ -13,7 +13,7 @@ An end-to-end food delivery web app built with the MERN stack, focused on secure
 -  **Restaurant Management** — restaurants can manage their own menus and listings
 -  **Live Rider Tracking** — *in progress* — real-time order/rider location tracking
 
-## Tech Stack
+## Tech  --
 
 | Layer | Technology |
 |---|---|
