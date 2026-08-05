@@ -3,6 +3,7 @@ import axios from "axios";
 import {useDispatch, useSelector} from "react-redux"
 import { setAddress, setCity, setState, setUserData } from "../redux/userSlice";
 import useGetShopsByCity from "./useGetShopsByCity";
+import { setLocation, setLocationText } from "../redux/mapSlice";
 
 const serverUrl = "http://localhost:3000"
 
@@ -20,7 +21,10 @@ function useGetCity() {
             dispatch(setCity(response.data.results[0].county))
             dispatch(setState(response.data.results[0].state))
             dispatch(setAddress(response.data.results[0].address_line2 ||  response.data.results[0].address_line1))
-            console.log(response.data)
+            dispatch(setLocation({lat: latitude, lng: longitude}));
+            dispatch(setLocationText(response.data.results[0].formatted))
+            
+            // console.log("Map Data", response.data)
         })
     }, [userData])
     useGetShopsByCity()
