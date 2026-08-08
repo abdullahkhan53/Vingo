@@ -12,6 +12,7 @@ import AddItem from './pages/item/AddItem'
 import EditItem from './pages/item/EditItem'
 import Cart from './pages/item/Cart'
 import Checkout from './pages/order/Checkout'
+import OrderPlaced from './pages/order/OrderPlaced'
 // import useGetShopsByCity from './hooks/useGetShopsByCity'
 // import UserDashboard from './components/UserDashboard'
 
@@ -35,6 +36,7 @@ function App() {
       <Route path="/edit-item/:itemId" element={userData? <EditItem/> : <Home/>}/>
       <Route path="/cart" element={userData? <Cart/> : <SignIn/>}/>
       <Route path="/checkout" element={userData? <Checkout/> : <SignIn/>}/>
+      <Route path="/order-placed" element={userData? <OrderPlaced/> : <SignIn/>}/>
       
 
     </Routes>

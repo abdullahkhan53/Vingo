@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setLocation, setLocationText } from "../../redux/mapSlice.js";
+import { handlePlaceOrder } from "../../axios/order.js";
 
 function Checkout() {
     const dispatch = useDispatch();
@@ -31,7 +32,7 @@ function Checkout() {
                 dispatch(setLocation({lat: latitude, lng: longitude}));
                 dispatch(setLocationText(response.data.results[0].formatted))
             })
-        }
+    }
     const getLatLngByAddress = async() => {
         try {
             const response = await axios.get(`https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(inputAddress)}&apiKey=${import.meta.env.VITE_GEOAPIFYKEY}`)
@@ -42,6 +43,24 @@ function Checkout() {
             
         } catch (error) {
             console.log(error)
+        }
+    }
+    const onPlaceOrderClick = async() => {
+        try {
+            const formData = {
+            paymentMethod,
+            totalPrice,
+            deliveryAddress:{
+                text,
+                longitude: lng,
+                latitude: lat
+            },
+            cartItems
+        }
+        await handlePlaceOrder(formData);
+        navigate("/order-placed")
+        } catch (error) {
+            console.log("Error in Checkout.jsx onPlaceOrderClick", error)
         }
     }
     return(
@@ -127,7 +146,8 @@ function Checkout() {
                             {/* ----------------- */}
                         </div>
                         <button className="w-full bg-[#ff4d2d] text-white font-bold py-2 px-4 rounded-md hover:bg-[#ff4d2d]-300
-                             transition-all duration-300 ease-in-out mt-2 cursor-pointer">
+                             transition-all duration-300 ease-in-out mt-2 cursor-pointer"
+                             onClick={onPlaceOrderClick}>
                                 {paymentMethod === "cod" ? "Place Order" : "Pay & Place Order"}
                             </button>
                     </section>
