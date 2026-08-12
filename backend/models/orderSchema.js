@@ -4,10 +4,11 @@ const Schema = mongoose.Schema;
 const shopOrderItemSchema = new Schema({
     item: {
         type: Schema.Types.ObjectId,
-        ref: "Items"
+        ref: "Item"
     },
     quantity: Number,
     subTotal: Number,
+    name: String,
 })
 
 const shopOrderSchema = new Schema({
@@ -19,7 +20,13 @@ const shopOrderSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     },
+    subTotal: Number,
     shopOrderItems: [shopOrderItemSchema],
+    status: {
+        type: String,
+        enum: ["preparing", "pending", "out of delivery", "delivered"],
+        default : "pending"
+    }
 })
 
 const orderSchema = new Schema({
@@ -30,14 +37,17 @@ const orderSchema = new Schema({
     },
     paymentMethod: {
         type: String,
-        enum: ["COD", "ONLINE"]
+        enum: ["cod", "online"]
     },
     deliveryAddress: {
         text: String,
         longitude: Number,
         latitude: Number
     },
-    shopOrder: [shopOrderSchema],
+    totalAmount:{
+        type: Number
+    },
+    shopOrders: [shopOrderSchema],
 },{timestamps: true});
 
 const Order = mongoose.model("Order", orderSchema);

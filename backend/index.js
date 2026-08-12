@@ -8,6 +8,7 @@ import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import shopRouter from "./routes/shopRoutes.js";
 import itemRouter from "./routes/itemRoutes.js";
+import orderRouter from "./routes/orderRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -27,6 +28,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/shop", shopRouter);
 app.use("/api/item", itemRouter);
+app.use("/api/order", orderRouter);
 
 
 
