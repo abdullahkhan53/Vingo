@@ -52,6 +52,7 @@ export const placeOrder = async(req, res) => {
             totalAmount,
             shopOrders: shopOrder
         });
+        await newOrder.populate("shopOrders.shopOrderItems.item", "name price image.url");
         return res.status(201).json({message: "Order Placed", newOrder});
     } catch (error) {
         return res.status(500).json({message: "Error in Place Order Controller", error});        
@@ -71,14 +72,46 @@ export const getMyOrders = async(req, res) => {
         } else if(user.role == "owner") {
             const orders = await Order.find({"shopOrders.owner": req.userId})
             .sort({createdAt: -1})
-            .populate("user", "fullName email mobile")
+            .populate("user", "username email mobile")
             .populate("shopOrders.shopOrderItems.item")
-            return res.status(200).json(orders);
+            .populate("shopOrders")
+
+            const filteredOrders = orders.map((order) => {
+                const filteredShopOrders = order.shopOrders.filter((shopOrder) => shopOrder.owner.toString() === req.userId);
+                return {
+                    ...order.toObject(),
+                    shopOrders: filteredShopOrders
+                }
+            })
+            
+            return res.status(200).json(filteredOrders);
             
         }}
         return res.status(400).json({message: "User not found"}); 
         } catch(error) {
             console.log("Error in Get Order Controller", error);
         return res.status(500).json({message: "Error in Get Order Controller", error});        
+    }
+}
+
+export const updateOrderStatus = async(req, res) => {
+    try {
+        const {orderId, shopId} = req.params;
+        const {status} = req.body;
+        let order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+        let newShopOrder = order.shopOrders.find((shopOrder) => (shopOrder.shop || shopOrder.shop._id).toString() === shopId.toString())
+        console.log(newShopOrder)
+        if(!newShopOrder) {
+            console.log("Shop Order not found for shopId:", shopId);
+            return res.status(400).json({message: "Status not updated by user"})
+        }
+        newShopOrder.status = status;
+        await order.save();
+        return res.status(200).json(newShopOrder);
+    } catch (error) {
+        return res.status(500).json("something wrong in updateOrderStatus controller");
     }
 }
