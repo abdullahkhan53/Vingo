@@ -13,6 +13,8 @@ import EditItem from './pages/item/EditItem'
 import Cart from './pages/item/Cart'
 import Checkout from './pages/order/Checkout'
 import OrderPlaced from './pages/order/OrderPlaced'
+import MyOrders from './pages/order/MyOrders'
+import useGetMyOrders from './hooks/useGetMyOrders'
 // import useGetShopsByCity from './hooks/useGetShopsByCity'
 // import UserDashboard from './components/UserDashboard'
 
@@ -21,6 +23,7 @@ function App() {
   useGenCurrUser()
   useGetCity()
   useGetMyShop()
+  useGetMyOrders()
   // useGetShopsByCity()
   const userData = useSelector((state) => state.user?.userData);
 
@@ -37,6 +40,7 @@ function App() {
       <Route path="/cart" element={userData? <Cart/> : <SignIn/>}/>
       <Route path="/checkout" element={userData? <Checkout/> : <SignIn/>}/>
       <Route path="/order-placed" element={userData? <OrderPlaced/> : <SignIn/>}/>
+      <Route path="/my-orders" element={userData? <MyOrders/> : <SignIn/>}/>
       
 
     </Routes>

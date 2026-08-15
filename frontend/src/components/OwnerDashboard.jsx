@@ -9,6 +9,7 @@ import ShopItem from "./item/ShopItem";
 function OwnerDashboard() {
     const {myShopData} = useSelector(state=>state.owner);
     const navigate = useNavigate()
+    
     return(
         <div className="w-full min-h-screen flex flex-col items-center bg-[#fff9f6]">
             <Navbar/>

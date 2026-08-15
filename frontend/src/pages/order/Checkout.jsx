@@ -49,7 +49,7 @@ function Checkout() {
         try {
             const formData = {
             paymentMethod,
-            totalPrice,
+            totalAmount: amountWithDelivery,
             deliveryAddress:{
                 text,
                 longitude: lng,
@@ -57,7 +57,7 @@ function Checkout() {
             },
             cartItems
         }
-        await handlePlaceOrder(formData);
+        await handlePlaceOrder(formData, dispatch);
         navigate("/order-placed")
         } catch (error) {
             console.log("Error in Checkout.jsx onPlaceOrderClick", error)

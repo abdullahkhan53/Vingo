@@ -95,7 +95,9 @@ function Navbar() {
                                 {/* MY PENDING ORDER */}
                                 <>
                                 <button className="hidden md:block cursor-pointer px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d]
-                                text-sm font-medium">Pending Orders</button>
+                                text-sm font-medium"
+                                onClick={() => navigate("/my-orders")}
+                                >Pending Orders</button>
                                 <span className="hidden md:block absolute right-[-9px] top-[-12px] text-[#ff4d3d]">0</span>
                                 </>
                                 </div>
@@ -110,7 +112,9 @@ function Navbar() {
                                 </div>
                                 {/* MY ORDER */}
                                 <button className="hidden md:block cursor-pointer px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d]
-                                text-sm font-medium">My Order</button>
+                                text-sm font-medium"
+                                onClick={() => navigate("/my-orders")}
+                                >My Order</button>
                                 </div>
                             }
                             
@@ -130,7 +134,10 @@ function Navbar() {
                             showInfo && 
                             <div className=" fixed top-[80px] right-5 w-[200px] bg-white shadow-lg rounded-lg p-4 items-center flex flex-col gap-[10px] z-[9999]">
                             <p className="cursor-pointer">{userData?.username || "User"}</p>
-                            {userData?.role == "user" && <div className="cursor-pointer">My Order</div>}
+                            {userData?.role == "user" && 
+                            <div className="cursor-pointer" onClick={() => navigate("/my-orders")}>
+                                My Order
+                            </div>}
                             <div className="cursor-pointer text-[#ff4d2d]" onClick={onLogoutClick}>
                                 Log Out
                             </div>

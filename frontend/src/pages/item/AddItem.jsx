@@ -14,7 +14,7 @@ function AddItem() {
 
     const [name, setName] = useState("")
     const [price, setPrice] = useState(0)
-    const [foodType, setFoodType] = useState("")
+    const [foodType, setFoodType] = useState("veg")
     const [category, setCategory] = useState("");
     const [frontendImage, setFrontendImage] = useState(null);
     const [backendImage, setBackendImage] = useState(null);
