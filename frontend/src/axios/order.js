@@ -29,15 +29,17 @@ export const handleGetMyOrders = async() => {
     }
 }
 
-export const handleUpdateOrderStatus = async(orderId, shopId, status, dispatch) => {
+export const handleUpdateOrderStatus = async(orderId, shopId, status, dispatch, setAvailableBoys) => {
     try {
         const result = await axios.post(`${serverUrl}api/order/update-status/${orderId}/${shopId}`,
             {status},
             {withCredentials: true}
         );
         dispatch(setUpdateOrderStatus({orderId, shopId, status}))
-        console.log(result)
+        setAvailableBoys(result.data.availableDeliveryBoys)
+        console.log(result.data.availableDeliveryBoys)
     } catch (error) {
+        console.log(error)
         throw error;
     }
 }

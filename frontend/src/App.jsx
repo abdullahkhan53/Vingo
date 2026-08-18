@@ -15,12 +15,14 @@ import Checkout from './pages/order/Checkout'
 import OrderPlaced from './pages/order/OrderPlaced'
 import MyOrders from './pages/order/MyOrders'
 import useGetMyOrders from './hooks/useGetMyOrders'
+import useGetCurrLocation from './hooks/useGetCurrLocation'
 // import useGetShopsByCity from './hooks/useGetShopsByCity'
 // import UserDashboard from './components/UserDashboard'
 
 function App() {
 
   useGenCurrUser()
+  useGetCurrLocation()
   useGetCity()
   useGetMyShop()
   useGetMyOrders()

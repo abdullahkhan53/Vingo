@@ -3,13 +3,16 @@ import { MdCall } from "react-icons/md";
 import { FaHome } from "react-icons/fa";
 import { handleUpdateOrderStatus } from "../../axios/order.js";
 import { useDispatch } from "react-redux";
+import { useState } from "react";
 
 function OwnerOrderComponent({data}) {
     const dispatch = useDispatch()
+    const [availableDeliveryBoys, setAvailableDeliveryBoys] = useState([])
      const onUpdateOrderStatusClick = async(orderId, shopId, status) => {
             try {
-                const result = await handleUpdateOrderStatus(orderId, shopId, status, dispatch)
-                console.log(result)
+                const result = await handleUpdateOrderStatus(orderId, shopId, status, dispatch, setAvailableDeliveryBoys)
+                console.log(availableDeliveryBoys)
+
             } catch (error) {
                 console.log(error)
             }
