@@ -1,3 +1,4 @@
+import DeliveryAssignment from "../models/deliveryAssignment.js";
 import Order from "../models/orderSchema.js";
 import Shop from "../models/shopModel.js";
 import User from "../models/userModel.js";
@@ -102,16 +103,89 @@ export const updateOrderStatus = async(req, res) => {
         if (!order) {
             return res.status(404).json({ message: "Order not found" });
         }
-        let newShopOrder = order.shopOrders.find((shopOrder) => (shopOrder.shop || shopOrder.shop._id).toString() === shopId.toString())
+        const lng = Number(order?.deliveryAddress?.longitude);
+        const lat = Number(order?.deliveryAddress?.latitude);
+
+        let newShopOrder = order.shopOrders.find((so) => (so.shop?._id || so.shop).toString() === shopId.toString())
         console.log(newShopOrder)
+
         if(!newShopOrder) {
             console.log("Shop Order not found for shopId:", shopId);
             return res.status(400).json({message: "Status not updated by user"})
         }
         newShopOrder.status = status;
         await order.save();
-        return res.status(200).json(newShopOrder);
+        let deliveryBoyPayload = [];
+        // Find available delivery boys
+        if(status == "preparing" || status == "pending") {
+            return res.status(200).json({message: "Order status updated"});
+        }
+
+        
+        if(status == "out of delivery" || !newShopOrder.assignment) {
+            const nearByDeliveryBoys = await User.find({
+                role: "deliveryBoy",
+                location: {
+                    $near: {
+                    $geometry: {
+                     type: 'Point',
+                     coordinates: [lng, lat]
+                    },
+                    $maxDistance: 5000
+                    }
+                }
+            })
+            if(!nearByDeliveryBoys || nearByDeliveryBoys.length === 0) {
+                await order.save();
+                return res.json({message: "Order status updated but no delivery boys available"});
+            }
+            // --------------------------------------
+
+            const nearByIds = nearByDeliveryBoys.map(b => b._id);
+            const busyIds = await DeliveryAssignment.find({
+                assignedTo: {$in: nearByIds},
+                status: {$nin: ["broadcasted", "delivered"]},
+            }).distinct("assignedTo");
+
+            const busyIdSet = new Set(busyIds.map(id => String(id)));
+            const availableDeliveryBoys = nearByDeliveryBoys.filter(b => !busyIdSet.has(String(b._id)));
+           
+            // --------------------------------------
+
+            const deliveryAssignment = await DeliveryAssignment.create({
+                order: order._id,
+                shop: shopId,
+                shopOrderId: newShopOrder._id,
+                broadcastTo: availableDeliveryBoys.map(b => b._id),
+                status: "broadcasted"
+            });
+
+            newShopOrder.assignment = deliveryAssignment._id;
+            newShopOrder.assignedDeliveryBoy = deliveryAssignment.assignedTo;
+
+            deliveryBoyPayload = availableDeliveryBoys.map(b => ({
+                id: b._id,
+                name: b.username,
+                email: b.email,
+                longitude: b.location.coordinates[0],
+                latitude: b.location.coordinates[1],
+                mobile: b.mobile
+            }))
+        }
+        await order.save();
+        await order.populate("shopOrders.shop", "name");
+        await order.populate("shopOrders.assignedDeliveryBoy", "username email mobile");
+
+        const updatedShopOrder = order.shopOrders.find((so) => (so.shop?._id || so.shop).toString() === shopId.toString())
+
+        return res.status(200).json({
+            shopOrder: updatedShopOrder,
+            assignedDeliveryBoy: updatedShopOrder?.assignedDeliveryBoy || null,
+            assignment: updatedShopOrder?.assignment._id || null,
+            availableDeliveryBoys: deliveryBoyPayload
+        });
+
     } catch (error) {
-        return res.status(500).json("something wrong in updateOrderStatus controller");
+        return res.status(500).json({message: "something wrong in updateOrderStatus controller", error});
     }
 }

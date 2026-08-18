@@ -26,6 +26,16 @@ const shopOrderSchema = new Schema({
         type: String,
         enum: ["preparing", "pending", "out of delivery", "delivered"],
         default : "pending"
+    },
+    assignment: {
+        type: Schema.Types.ObjectId,
+        ref: "DeliveryAssignment",
+        default: null
+    },
+    assignedDeliveryBoy:{
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        default: null
     }
 })
 
