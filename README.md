@@ -31,7 +31,6 @@ An end-to-end food delivery web app built with the MERN stack, focused on secure
 - Google OAuth credentials (Client ID/Secret)
 - Cloudinary account (API key/secret)
 - Email account/app password for Nodemailer
-- .
 
 ### Installation
 
