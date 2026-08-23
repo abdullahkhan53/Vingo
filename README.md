@@ -73,7 +73,7 @@ npm run dev
 npm run dev
 ``
 
-## Roadmap
+## Roadmap:
 
 - [x] Role-based authentication (JWT + 2FA + Google OAuth)
 - [x] Restaurant & menu management
