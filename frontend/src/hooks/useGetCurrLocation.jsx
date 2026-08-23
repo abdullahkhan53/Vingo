@@ -13,7 +13,7 @@ function useGetCurrLocation() {
              {lng, lat},
             {withCredentials: true}
         )
-        console.log("Location Updated", result.data)
+        // console.log("Location Updated", result.data)
     }
     navigator.geolocation.watchPosition( (pos) => {
         updateLocation({lng: pos.coords.longitude, lat: pos.coords.latitude})

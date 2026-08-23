@@ -29,17 +29,53 @@ export const handleGetMyOrders = async() => {
     }
 }
 
-export const handleUpdateOrderStatus = async(orderId, shopId, status, dispatch, setAvailableBoys) => {
+export const handleUpdateOrderStatus = async(orderId, shopId, status, dispatch, setAvailableDeliveryBoys) => {
     try {
         const result = await axios.post(`${serverUrl}api/order/update-status/${orderId}/${shopId}`,
             {status},
             {withCredentials: true}
         );
         dispatch(setUpdateOrderStatus({orderId, shopId, status}))
-        setAvailableBoys(result.data.availableDeliveryBoys)
-        console.log(result.data.availableDeliveryBoys)
+        setAvailableDeliveryBoys(result.data.availableDeliveryBoys)
+        console.log(result.data)
     } catch (error) {
         console.log(error)
+        throw error;
+    }
+}
+
+export const handGetDeliveryBoyAssignments = async() => {
+    try {
+        const result = await axios.get(`${serverUrl}api/order/get-assignments`,
+            {withCredentials: true}
+        )
+        return result.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const handleDeliveryOrder = async(assignmentId) => {
+    try {
+        const result = await axios.post(`${serverUrl}api/order/accept-order/${assignmentId}`,
+            {}, 
+            {withCredentials: true}
+        );
+        return result.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const handleGetCurrentOrder = async(setCurrentOrder) => {
+    try {
+        const result = await axios.get(`${serverUrl}api/order/get-current-order`,
+            {withCredentials: true}
+        )
+        console.log(result.data)
+        setCurrentOrder(result.data);
+        return result.data;
+    } catch(error) {
         throw error;
     }
 }

@@ -105,11 +105,11 @@ function Navbar() {
                                 :
 
                                 <div className="flex items-center gap-5 ">
-                                <div className="relative cursor-pointer">
+                                { userData.role == "user" && <div className="relative cursor-pointer">
                                     <FaShoppingCart size={25} className="text-[#ff4d2d]"
                                      onClick={() => navigate("/cart")}/>
                                     <span className="absolute right-[-9px] top-[-12px] text-[#ff4d3d]">{cartItems.length}</span>
-                                </div>
+                                </div>}
                                 {/* MY ORDER */}
                                 <button className="hidden md:block cursor-pointer px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d]
                                 text-sm font-medium"
@@ -132,7 +132,8 @@ function Navbar() {
                         {/* ON PROFILE CLICK */}
                         {
                             showInfo && 
-                            <div className=" fixed top-[80px] right-5 w-[200px] bg-white shadow-lg rounded-lg p-4 items-center flex flex-col gap-[10px] z-[9999]">
+                            <div className={` fixed top-[80px] ${userData.role=="deliveryBoy"? "w-[200px] right-[150px]": "w-[200px] right-5"} 
+                                             bg-white shadow-lg rounded-lg p-4 items-center flex flex-col gap-[10px] z-[9999]`}>
                             <p className="cursor-pointer">{userData?.username || "User"}</p>
                             {userData?.role == "user" && 
                             <div className="cursor-pointer" onClick={() => navigate("/my-orders")}>

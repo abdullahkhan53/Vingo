@@ -8,10 +8,10 @@ import { useState } from "react";
 function OwnerOrderComponent({data}) {
     const dispatch = useDispatch()
     const [availableDeliveryBoys, setAvailableDeliveryBoys] = useState([])
+    console.log(availableDeliveryBoys)
      const onUpdateOrderStatusClick = async(orderId, shopId, status) => {
             try {
                 const result = await handleUpdateOrderStatus(orderId, shopId, status, dispatch, setAvailableDeliveryBoys)
-                console.log(availableDeliveryBoys)
 
             } catch (error) {
                 console.log(error)
@@ -50,6 +50,24 @@ function OwnerOrderComponent({data}) {
                     <option value="out of delivery">Out Of Delivery</option>
                 </select>
             </div>
+
+            {
+                availableDeliveryBoys?.length > 0 && 
+                <div className="mt-4 bg-gray-100 p-2 rounded-lg">
+                    <p className="font-semibold text-gray-700 mb-2">Available Delivery Boys</p>
+                    <div>
+                        {
+                            availableDeliveryBoys?.map((boy) => (
+                               <>
+                                    <p className="text-sm text-gray-600"><span className="font-semibold">Name:</span> {boy.name}</p> 
+                                    <p className="text-sm text-gray-600"><span className="font-semibold">Mobile:</span> {boy.mobile}</p> 
+                                    <p className="text-sm text-gray-600"><span className="font-semibold">Email:</span> {boy.email}</p>
+                               </> 
+                            ))
+                        }
+                    </div>
+                </div>
+            }
 
             <div className="text-right font-bold text-sm mt-6">
                 <p>Total Amount: Rs{data.shopOrders[0].subTotal}</p>
