@@ -24,7 +24,7 @@ An end-to-end food delivery web app built with the MERN stack, focused on secure
 | Image Storage | Cloudinary |
 
 ## Getting Started
-
+...
 ### Prerequisites
 - Node.js installed
 - MongoDB database (local or Atlas)
