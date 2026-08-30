@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function UserOrderComponent({data}) {
+
+    const navigate = useNavigate()
     
     const formatDate = (data) => {
         let date = new Date(data);
@@ -50,7 +53,8 @@ function UserOrderComponent({data}) {
                 }
                  <div className="flex items-center justify-between mt-2 border-b border-gray-400 p-4 mx-2">
                     <p className="text-lg font-semibold text-[#ff4d2d]">Total Amount: Rs/{data.totalAmount}</p>
-                    <button className="bg-[#ff4d2d] text-white py-2 px-4 rounded-lg hover:bg-[#ff4d2d] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    <button className="bg-[#ff4d2d] text-white py-2 px-4 rounded-lg hover:bg-[#ff4d2d] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 cursor-pointer"
+                    onClick={() => navigate(`/get-orders-by-id/${data._id}`)}>
                          Track Order
                     </button>
                 </div>

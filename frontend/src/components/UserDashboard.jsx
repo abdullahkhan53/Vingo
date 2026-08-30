@@ -7,11 +7,15 @@ import { useSelector } from "react-redux";
 import Navbar from "./Navbar";
 import ShopsByCity from "./shop/ShopsByCity.jsx";
 import ItemsByCity from "./item/ItemsByCity.jsx";
+import { useNavigate, useParams } from "react-router-dom";
+// import { handleGetShopById } from "../axios/shop.js";
 
 function UserDashboard() {
 
     const shops = useSelector(state => state.user.shopsByCity)
     const {currCity} = useSelector(state => state.user)
+
+    const navigate = useNavigate();
 
     const cateScrollRef = useRef();
     const shopScrollRef = useRef();
@@ -19,6 +23,8 @@ function UserDashboard() {
     const [isLeftCateScroll, setIsLeftCateScroll] = useState(false);
     const [isRightShopScroll, setIsRightShopScroll] = useState(false);
     const [isLeftShopScroll, setIsLeftShopScroll] = useState(false);
+
+    const [updatedfilteredItems, setUpdatedFilteredItems] = useState([]);
 
     const  handleScroll = (ref, direction) => {
         try {
@@ -76,7 +82,28 @@ function UserDashboard() {
         }
     }
 
+    const handleShowFilteredItems = (category) => {
+        try {
+           if(!shops || shops.length === 0) return;
+
+            if(category === "All") {
+                let allItems = shops.map( shop => shop.items || []).flat();
+                setUpdatedFilteredItems(allItems);
+            }
+            else {
+                const filteredItems = shops.map( shop => shop.items.filter( (item) => {
+                return (item.category).toLowerCase() === (category).toLowerCase()
+             }))            
+                setUpdatedFilteredItems(filteredItems.flat());
+           }
+
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     useEffect( () => {
+        
         try{
             if(cateScrollRef.current) {
             const cateScrollContainer = cateScrollRef.current;
@@ -106,6 +133,13 @@ function UserDashboard() {
         }
     }, [])
 
+    useEffect( () => {
+        let  all = "All";
+        handleShowFilteredItems(all);
+    }, [shops])
+    
+   
+
     return(
         <div className="w-screen min-h-screen flex flex-col items-center bg-[#fff9f6] overflow-y-auto">
         <Navbar/>
@@ -127,8 +161,8 @@ function UserDashboard() {
                     {/* Category Component */}
                     <div className="w-full flex items-center gap-4 overflow-x-auto  pb-2" ref={cateScrollRef}>
                         {
-                            categories.map((category, index) => {
-                                return <Category data={category} key={index}/>;
+                            categories.map((cate, index) => {
+                                return <Category data={cate} key={index} onClick={() => handleShowFilteredItems(cate.category)}/>;
                             })
                         }
                     </div>
@@ -162,7 +196,7 @@ function UserDashboard() {
                         {
                             shops?.length > 0 ? 
                             shops.map((shop, index) => {
-                                return <ShopsByCity data={shop} key={index}/>;
+                                return <ShopsByCity data={shop} key={index} onClick={ () => navigate(`/get-shop-by-id/${shop._id}`)}/>;
                             }) : ""
                         }
                     </div>
@@ -185,13 +219,10 @@ function UserDashboard() {
                 {/* Items in current city Component */}
                     <div className="w-full flex items-center justify-center gap-6 flex-wrap  pb-2" >
                         {
-                            shops?.length > 0 ? 
-                            shops.map((shop, shopIndex) => {
-                                return(
-                                shop.items?.map((item, itemIndex) => {
+                            updatedfilteredItems && updatedfilteredItems.length > 0 && 
+                                updatedfilteredItems?.map((item, itemIndex) => {
                                     return <ItemsByCity data={item} key={itemIndex}/>;
-                                }))
-                            }) : ""
+                                })
                         }
                         </div>
 

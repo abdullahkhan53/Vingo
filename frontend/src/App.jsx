@@ -16,6 +16,8 @@ import OrderPlaced from './pages/order/OrderPlaced'
 import MyOrders from './pages/order/MyOrders'
 import useGetMyOrders from './hooks/useGetMyOrders'
 import useGetCurrLocation from './hooks/useGetCurrLocation'
+import TrackDeliveryOrder from './pages/order/TrackDeliveryOrder'
+import Shop from './pages/shop/Shop'
 // import useGetShopsByCity from './hooks/useGetShopsByCity'
 // import UserDashboard from './components/UserDashboard'
 
@@ -43,7 +45,8 @@ function App() {
       <Route path="/checkout" element={userData? <Checkout/> : <SignIn/>}/>
       <Route path="/order-placed" element={userData? <OrderPlaced/> : <SignIn/>}/>
       <Route path="/my-orders" element={userData? <MyOrders/> : <SignIn/>}/>
-      
+      <Route path="/get-orders-by-id/:orderId" element={userData? <TrackDeliveryOrder/> : <SignIn/>}/>
+      <Route path="/get-shop-by-id/:shopId" element={userData? <Shop/> : <SignIn/>}/>
 
     </Routes>
     </>

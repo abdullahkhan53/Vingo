@@ -21,15 +21,15 @@ function AddItem() {
     const [loading, setLoading] = useState(false);
 
     const categories = [
-            "Snack",
+            "Snacks",
             "Main Course",
-            "Deserts",
+            "Desserts",
             "Pizza",
             "Burgers",
             "Sandwiches",
             "South Pakistani",
             "North Pakistani",
-            "Chinees",
+            "Chineese",
             "Fast Food",
             "Others"
         ]

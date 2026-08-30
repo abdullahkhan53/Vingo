@@ -1,24 +1,40 @@
 import { useSelector } from "react-redux";
 import Navbar from "./Navbar";
 import { useEffect } from "react";
-import { handGetDeliveryBoyAssignments, handleDeliveryOrder, handleGetCurrentOrder } from "../axios/order";
+import { handGetDeliveryBoyAssignments, handleDeliveryOrder, handleGetCurrentOrder, handleSendDeliveryOtp, handleVerifyDeliveryOtp } from "../axios/order";
 import { useState } from "react";
+import DeliveryBoyTracking from "./order/DeliveryBoyTracking";
 
 function DeliveryBoyDashboard() {
     const { userData } = useSelector(state => state.user);
     const [deliveryAssignments, setDeliveryAssignments] = useState([]);
     const [currentOrder, setCurrentOrder] = useState(null);
-
+    const [sendOtp, setSendOtp] = useState(false);
+    const [otp, setOtp] = useState(null);
+    console.log("current order for testing: ", currentOrder)
     const onDeliveryOrderClick = async(assignmentId) => {
         try {
             const result = await handleDeliveryOrder(assignmentId);
-            setCurrentOrder(null);
+            // setCurrentOrder(null);
             await handleGetCurrentOrder(setCurrentOrder);
 
             console.log(result)
         } catch(err) {
             console.log(err)
         }
+
+    }
+
+    const onHandleSendOtpClick = async(orderId, shopId) => {
+        await handleSendDeliveryOtp(orderId, shopId)
+        setSendOtp(true);
+        console.log("send otp")
+    }
+
+    const onHandleVerifyOtpClick = async(orderId, shopId, otp) => {
+        // setSendOtp(true);
+        await handleVerifyDeliveryOtp(orderId, shopId, otp)
+        console.log("otp verified")
 
     }
 
@@ -89,9 +105,26 @@ function DeliveryBoyDashboard() {
                     <div className="w-[90%] bg-white shadow-xl rounded-lg p-4">
                         <h1 className="text-xl font-bold mb-4">Current Order</h1>
                         <div className="border border-gray-200 p-2 rounded-lg shadow-md">
-                            <p className="font-semibold text-sm text-orange-400"> {currentOrder.shopName}</p>
-
+                            <p className="font-semibold  text-orange-400"> {currentOrder.shopName}</p>
+                            <p className="text-sm text-gray-400">{currentOrder.shopOrder.shopOrderItems.length} items | {currentOrder.shopOrder.subTotal}</p>
                         </div>
+                        <DeliveryBoyTracking data={currentOrder}/>
+                        {
+                            !sendOtp ?
+                            <button className="w-full bg-green-500 py-2 text-white px-8  rounded-md mt-4 hover:bg-green-600 transition-colors duration-300 cursor-pointer"
+                            onClick={() => onHandleSendOtpClick(currentOrder._id, currentOrder.shopOrder._id)}>
+                                Arrived
+                            </button> :
+                            <div className="w-full border border-gray-400 rounded-lg p-2 mt-4 shadow-md hover:border-none">
+                                <p className="text-gray-600 font-semibold ">Enter OTP send to <span className="text-orange-500">{currentOrder.user.username}</span></p>
+                                <input type="text" placeholder="Enter OTP" className="w-full border border-gray-300 p-2 rounded-md mt-4"
+                                onChange={(e) => setOtp(e.target.value)}/>
+                                <button className="w-full bg-orange-400 py-2 text-white px-8 rounded-md mt-4 hover:bg-orange-600 transition-colors duration-300 cursor-pointer"
+                                onClick={() => onHandleVerifyOtpClick(currentOrder._id, currentOrder.shopOrder._id, otp)}>
+                                    Verify OTP
+                                </button>
+                            </div>
+                        }
                     </div>
                 }
 

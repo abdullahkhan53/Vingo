@@ -79,3 +79,42 @@ export const handleGetCurrentOrder = async(setCurrentOrder) => {
         throw error;
     }
 }
+
+export const handleGetOrderById = async(orderId) => {
+    try {
+        const result = await axios.get(`${serverUrl}api/order/get-order-by-id/${orderId}`,
+            {withCredentials: true}
+        )
+        return result.data;
+    } catch(error) {
+        throw error;
+    }
+}
+
+export const handleSendDeliveryOtp = async(orderId, shopOrderId) => {
+    try {
+        const result = await axios.post(`${serverUrl}api/order/send-delivery-otp`,
+            {orderId, shopOrderId},
+            {withCredentials: true}
+        )
+        
+        return result.data;
+
+    }  catch(error) {
+        throw error;
+    }
+}
+
+export const handleVerifyDeliveryOtp = async(orderId, shopOrderId, otp) => {
+    try {
+        const result = await axios.post(`${serverUrl}api/order/verify-delivery-otp`,
+            {orderId, shopOrderId, otp},
+            {withCredentials: true}
+        ) 
+        
+        return result.data;
+
+    } catch (error) {
+        throw error;
+    }
+}

@@ -8,7 +8,7 @@ import { useState } from "react";
 function OwnerOrderComponent({data}) {
     const dispatch = useDispatch()
     const [availableDeliveryBoys, setAvailableDeliveryBoys] = useState([])
-    console.log(availableDeliveryBoys)
+    console.log("available order", availableDeliveryBoys)
      const onUpdateOrderStatusClick = async(orderId, shopId, status) => {
             try {
                 const result = await handleUpdateOrderStatus(orderId, shopId, status, dispatch, setAvailableDeliveryBoys)

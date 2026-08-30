@@ -31,3 +31,16 @@ export const handleGetShopsByCity = async(city) => {
         throw err;
     }
 }
+
+export const handleGetShopById = async(shopId) => {
+    try {
+        const result = await axios.get(`${serverUrl}/api/shop/get-shop-by-id/${shopId}`,
+            {withCredentials: true}
+        )
+
+        return result.data;
+
+    } catch (err) {
+        throw err;
+    }
+}
