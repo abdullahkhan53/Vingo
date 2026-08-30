@@ -34,3 +34,25 @@ export const sendMail = async(to, otp) => {
         return console.log(error)
     }
 }
+
+export const sendDeliveryOtpMail = async(user, otp) => {
+    try {
+       
+        try {
+            await transporter.verify();
+            console.log("Server is ready to take our messages");
+        } catch (err) {
+            console.error("Verification failed:", err);
+        }
+
+        await transporter.sendMail({
+        from: process.env.EMAIL,
+        to: user.email,
+        subject: "Order Delivery OTP", 
+        // text: "Hello world?",
+        html: `<p>For deliver your order, your OTP : <b>${otp}</b></p>, It will expire in 5 minutes.`,
+})
+    } catch (error) {
+        return console.log(error)
+    }
+}

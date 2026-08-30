@@ -36,6 +36,18 @@ const shopOrderSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
         default: null
+    },
+    deliveryOtp: {
+        type: Number,
+        default: null
+    },
+    otpExpires: {
+        type: Date,
+        default: null
+    },
+    deliveredAt: {
+        type: Date,
+        default: null
     }
 })
 

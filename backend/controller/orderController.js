@@ -2,6 +2,8 @@ import DeliveryAssignment from "../models/deliveryAssignment.js";
 import Order from "../models/orderSchema.js";
 import Shop from "../models/shopModel.js";
 import User from "../models/userModel.js";
+import crypto from "crypto";
+import { sendDeliveryOtpMail } from "../utils/mail.js";
 
 export const placeOrder = async(req, res) => {
     try {
@@ -298,17 +300,102 @@ export const getCurrentOrder = async(req, res) => {
       
         
         return res.status(200).json({
-            _id: assignment._id,
+            _id: assignment.order._id,
             shopOrder,
             deliveryBoyLocation,
             customerLocation,
             deliveryAddress: assignment.order.deliveryAddress,
             user: assignment.order.user,
-            shopName: assignment.shop.name
+            shopName: assignment.shop.name,
         });
 
     } catch(error) {
         console.log(error);
         return res.status(500).json({message: "Error in getCurrentOrder controller", error});
+    }
+}
+
+export const getOrderById = async(req, res) => {
+    try {
+        const {orderId} = req.params;
+        const order = await Order.findById(orderId)
+        .populate([
+            {
+            path: "shopOrders.assignedDeliveryBoy",
+            model: "User"
+            },
+            {
+            path: "shopOrders.shopOrderItems.item",
+            model: "Item"
+            },
+            {
+            path: "shopOrders.shop",
+            model: "Shop"
+            }
+        ]).lean()
+        if(!order) {
+            return res.status(404).json({message: "Order not found"});
+        }
+        return res.status(200).json(order)
+
+    } catch (error) {
+        return res.status(500).json({message: "Error in getOrderById controller", error});
+    }
+}
+
+export const sendDeliveryOtp = async(req, res) => {
+    try {
+        const {orderId, shopOrderId} = req.body;
+        const order = await Order.findById(orderId).populate("user");
+        if(!order) {
+            return res.status(404).json({message: "Unable to find Order"})
+        }
+        let shopOrder = order.shopOrders.id(shopOrderId)
+        if(!shopOrder) {
+            return res.status(404).json({message: "Unable to find Shop Order"})
+        }
+        
+
+        const otp = crypto.randomInt(100000, 1000000);
+        shopOrder.deliveryOtp = otp;
+        shopOrder.otpExpires = Date.now() + 5 * 60 * 1000;
+        await order.save();
+        await sendDeliveryOtpMail(order.user, otp)
+        
+        return res.status(200).json({message: `Delivery OTP send to ${order.user.username}`});
+
+    } catch(error) {
+        return res.status(500).json({message: "Error in sendDeliveryOtp controller", error: error.message});
+    }
+};
+
+export const verifyDeliveryOtp = async(req, res) => {
+    try {
+        const {orderId, shopOrderId, otp} = req.body;
+        const order = await Order.findById(orderId).populate("user");
+        let shopOrder = order.shopOrders.id(shopOrderId)
+
+         if(!order || !shopOrder) {
+            return res.status(404).json({message: "Unable to find Order/Shop Order"})
+        }
+
+        if(shopOrder.deliveryOtp != Number(otp) || !shopOrder.otpExpires || shopOrder.otpExpires < Date.now()) {
+            return res.status(404).json({message: `Invalid / Expire OTP for this delivery, Kindly send again`});
+        }
+
+        shopOrder.status = "delivered";
+        shopOrder.deliveredAt = Date.now();
+        shopOrder.assignment.status = "delivered";
+
+        await DeliveryAssignment.deleteOne({
+            order: order._id,
+            shopOrderId: shopOrder._id,
+            assignedTo: shopOrder.assignedDeliveryBoy,
+        })
+
+        return res.status(200).json({message: "Delivery OTP verified, Order marked as delivered"});
+
+    } catch (error) {
+        return res.status(500).json({message: "Error in verifyDeliveryOtp controller", error});
     }
 }

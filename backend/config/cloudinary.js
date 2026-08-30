@@ -9,9 +9,9 @@ cloudinary.config({
     timeout: 60000
 });
 // console.log(cloudinary.config())
-cloudinary.api.ping()
-  .then(res => console.log("PING OK:", res))
-  .catch(err => console.log("PING FAILED:", err));
+// cloudinary.api.ping()
+//   .then(res => console.log("PING OK:", res))
+//   .catch(err => console.log("PING FAILED:", err));
 
 console.log("Cloudinary initialized successfully.");
 
