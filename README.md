@@ -1,5 +1,5 @@
 # Vingo  — Food Delivery Platform
-
+...
 An end-to-end food delivery web app built with the MERN stack, focused on secure, production-style authentication and real-world features like restaurant management, cart handling, and order processing. **(In Progress)**
 
 ## Features
