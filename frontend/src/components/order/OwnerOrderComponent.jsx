@@ -40,6 +40,14 @@ function OwnerOrderComponent({data}) {
                 )
             }
             </div>
+            
+            <div>
+                    {
+                        data.paymentMethod === "cod" ?
+                        <p className="text-gray-500 text-sm">{data.paymentMethod.toUpperCase()}</p> :
+                        <p className="text-gray-500 text-sm">Payment: {data.payment? "true" : "false"}</p>
+                    }
+            </div>
 
             <div className="flex items-center justify-between">
                 <span>Status: <span className="text-[#ff4d2d]">{data.shopOrders[0]?.status}</span></span>

@@ -70,6 +70,12 @@ const orderSchema = new Schema({
         type: Number
     },
     shopOrders: [shopOrderSchema],
+    payment: {
+        type: Boolean,
+        default: false
+    },
+    safepayOrderId: { type: String, default: "" },
+    safepayPaymentId: { type: String, default: ""},
 },{timestamps: true});
 
 const Order = mongoose.model("Order", orderSchema);

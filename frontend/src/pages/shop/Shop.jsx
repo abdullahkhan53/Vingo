@@ -1,10 +1,12 @@
 import react, { useEffect, useState } from "react";
 import { handleGetShopById } from "../../axios/shop";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaShop } from "react-icons/fa6";
 import { IoLocation } from "react-icons/io5";
 // import ItemsByShopId from "./ItemsByShopId";
 import ItemsByCity from "../../components/item/ItemsByCity";
+import { IoIosArrowBack } from "react-icons/io";
+
 
 
 function Shop() {
@@ -12,6 +14,8 @@ function Shop() {
     const { shopId } = useParams();
     const [shopData, setShopData] = useState(null);
     const [ shopItems, setShopItems] = useState(null);
+
+    const navigate = useNavigate();
 
     useEffect( () => {
        async function data () {
@@ -28,6 +32,14 @@ function Shop() {
 
     return (
         <div className="min-h-screen bg-gray-50">
+
+            <div className="absolute left-6 top-6 flex items-center gap-2 text-white cursor-pointer
+            px-4 py-2 rounded-lg bg-gray-700 hover:bg-[#ff4d2d]/20 transition-all duration-300 z-10000"
+            onClick={() => navigate("/")}>
+                <span><IoIosArrowBack /></span>
+                <span>Back</span>
+            </div>
+
             {
                 shopData &&
                 <div className="relative w-full h-64 md:h-80 lg:h-96">
@@ -46,7 +58,7 @@ function Shop() {
 
                 {
                     shopItems && shopItems.length > 0 ? 
-                    <div className="flex items-center justify-center flex-wrap gap-5 mx-[20%]">
+                    <div className="flex items-center justify-center flex-wrap gap-5 mx-[15%]">
                         {
                          shopItems.map( (item, index) => (
                           <ItemsByCity data={item} key={index} />

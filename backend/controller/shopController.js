@@ -1,3 +1,4 @@
+import Item from "../models/itemsSchema.js";
 import Shop from "../models/shopModel.js";
 // import {cloudinary} from "../config/cloudinary.js";
 import  {uploadToCloudinary}  from "../utils/streamifier.js"
@@ -109,5 +110,35 @@ export const getShopById = async(req, res) => {
         })
     } catch(err) {
         return res.status(500).json({message: `Error in Get Shop By Id Controller, ${err}`})
+    }
+}
+
+export const getItemsBySearch = async(req, res) => {
+    try {
+        const { query, city } = req.query;
+        if(!query || !city) {
+            res.status(400).json({message: "Query and city are required"})
+            return null;
+        }
+        const shops = await Shop.find({
+            city: { $regex: new RegExp(`^${city}$`, "i") }
+        }).populate("items")
+        
+
+        if(!shops || shops.length === 0) {
+            return res.status(400).json({message: "Shop not found in this city"})
+        }
+        let shopIds = shops.map(shop => shop._id);
+        const items = await Item.find({
+            shop: { $in: shopIds },
+            $or: [
+                {name: { $regex: query, $options: "i" }},
+                {category: { $regex: query, $options: "i" }}
+            ]
+        }).populate("shop", "name image city state address");
+
+        return res.status(200).json({ message: "Items found", items });
+    } catch(err) {
+        return res.status(500).json({message: `Error in Get Items By Search Controller, ${err}`})
     }
 }

@@ -4,17 +4,38 @@ import { setAddLastOrder, setUpdateOrderStatus } from "../redux/userSlice.js";
 const serverUrl = "http://localhost:3000/"
 
 
-export const handlePlaceOrder = async(formData, dispatch) => {
+export const handlePlaceOrder = async(formData, dispatch, paymentMethod) => {
     
     try {
         const result = await axios.post(`${serverUrl}api/order/place-order`, formData,
         {withCredentials: true}
         )
-        console.log(result.data);
-        dispatch(setAddLastOrder(result.data.newOrder))
+
+        if(paymentMethod === "cod") {
+         console.log(result.data);
+         dispatch(setAddLastOrder(result.data.newOrder))
+        } else {
+            window.location.href = result.data.checkoutUrl;            
+            dispatch(setAddLastOrder(result.data.newOrder))
+       }
+
     } catch (error) {
         console.log("Status : 401  ---  Error in Place Order", error)
         throw error;
+    }
+}
+
+export const handleVerifyOrder = async(tracker) => {
+    try {
+
+        const result = await axios.post(`${serverUrl}api/order/verify-payment`,
+             {tracker},
+            {withCredentials: true}
+        );
+        return result.data;
+
+    } catch(err) {
+        throw err;
     }
 }
 
@@ -23,7 +44,7 @@ export const handleGetMyOrders = async() => {
         const result = await axios.get(`${serverUrl}api/order/my-orders`,
             {withCredentials: true}
         );
-        return 
+        return result.data
     } catch(error) {
         throw error;
     }

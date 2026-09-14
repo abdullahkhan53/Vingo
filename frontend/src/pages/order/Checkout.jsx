@@ -17,7 +17,7 @@ function Checkout() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const {lat, lng, text} = useSelector(state => state?.map?.location)
-    const {cartItems,totalPrice} = useSelector(state => state?.user)
+    const {cartItems,totalPrice, userData} = useSelector(state => state?.user)
     const [inputAddress, setInputAddress] = useState(text || "")
     const [paymentMethod, setPaymentMethod] = useState("cod");
 
@@ -25,13 +25,15 @@ function Checkout() {
     const amountWithDelivery = totalPrice + delivery;
 
     const getAddressByLatLng = () => {
-            navigator.geolocation.getCurrentPosition( async(position) => {
-                const {latitude, longitude} = position.coords;
-                 const response = await axios.get
-                (`https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${import.meta.env.VITE_GEOAPIFYKEY}`)
+            // navigator.geolocation.getCurrentPosition( async(position) => {
+            //     const {latitude, longitude} = position.coords;
+            //      const response = await axios.get
+            //     (`https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${import.meta.env.VITE_GEOAPIFYKEY}`)
+            let latitude = userData.location.coordinates[1];
+            let longitude = userData.location.coordinates[0];
                 dispatch(setLocation({lat: latitude, lng: longitude}));
                 dispatch(setLocationText(response.data.results[0].formatted))
-            })
+            // })
     }
     const getLatLngByAddress = async() => {
         try {
@@ -57,8 +59,10 @@ function Checkout() {
             },
             cartItems
         }
-        await handlePlaceOrder(formData, dispatch);
-        navigate("/order-placed")
+        await handlePlaceOrder(formData, dispatch, paymentMethod);
+        navigate("/order-placed", {
+            state:{ paymentMethod: paymentMethod }
+        })
         } catch (error) {
             console.log("Error in Checkout.jsx onPlaceOrderClick", error)
         }

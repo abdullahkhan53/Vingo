@@ -23,7 +23,11 @@ function UserOrderComponent({data}) {
                     <p className="text-gray-500 text-sm">Date: {formatDate(data.createdAt)}</p>
                 </div>
                 <div>
-                    <p className="text-gray-500 text-sm">{data.paymentMethod.toUpperCase()}</p>
+                    {
+                        data.paymentMethod === "cod" ?
+                        <p className="text-gray-500 text-sm">{data.paymentMethod.toUpperCase()}</p> :
+                        <p className="text-gray-500 text-sm">Payment: {data.payment? "true" : "false"}</p>
+                    }
                     <p className="font-semibold italic text-blue-600">{data.shopOrders?.[0].status}</p>
                 </div>
             </div>

@@ -13,7 +13,7 @@ import { useNavigate, useParams } from "react-router-dom";
 function UserDashboard() {
 
     const shops = useSelector(state => state.user.shopsByCity)
-    const {currCity} = useSelector(state => state.user)
+    const {currCity, searchItems} = useSelector(state => state.user)
 
     const navigate = useNavigate();
 
@@ -143,6 +143,20 @@ function UserDashboard() {
     return(
         <div className="w-screen min-h-screen flex flex-col items-center bg-[#fff9f6] overflow-y-auto">
         <Navbar/>
+
+            {
+                searchItems && searchItems !== null && searchItems.length > 0 &&
+                <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-[10px] mt-[110px]">
+                    <h1 className="text-gray-800 text-4xl mb-4">Search Results</h1>
+                    <div className="flex gap-5 flex-wrap ">
+                        {
+                        searchItems.map( (item, index) => {
+                            return <ItemsByCity data={item} key={index} />
+                        })
+                    }
+                    </div>
+                </div>
+            }
 
             <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-[10px] mt-[110px]">
                 <h1 className="text-gray-800 text-4xl mb-4">Inspiration for your first order!</h1>

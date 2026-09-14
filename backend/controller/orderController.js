@@ -1,9 +1,22 @@
+import dotenv from "dotenv"
+dotenv.config();
+
 import DeliveryAssignment from "../models/deliveryAssignment.js";
 import Order from "../models/orderSchema.js";
 import Shop from "../models/shopModel.js";
 import User from "../models/userModel.js";
 import crypto from "crypto";
 import { sendDeliveryOtpMail } from "../utils/mail.js";
+import Safepay from '@sfpy/node-core'
+import axios from "axios";
+
+const safepay = new Safepay(process.env.SAFEPAY_API_SECRET, {
+  authType: 'secret',
+  host: 'https://sandbox.api.getsafepay.com'
+});
+
+// console.log(safepay)
+// console.log(safepay.checkout.createCheckoutUrl.toString());
 
 export const placeOrder = async(req, res) => {
     try {
@@ -44,23 +57,137 @@ export const placeOrder = async(req, res) => {
                 }))
             }
         }));
-        const newOrder = await Order.create({
-            user: req.userId,
-            paymentMethod,
-            deliveryAddress:{
-                text: deliveryAddress.text,
-                longitude: deliveryAddress.longitude,
-                latitude: deliveryAddress.latitude
-            },
-            totalAmount,
-            shopOrders: shopOrder
+
+         const newOrder = await Order.create({
+                user: req.userId,
+                paymentMethod,
+                deliveryAddress:{
+                    text: deliveryAddress.text,
+                    longitude: deliveryAddress.longitude,
+                    latitude: deliveryAddress.latitude
+                },
+                totalAmount,
+                shopOrders: shopOrder,
+                payment: false,
+                safepayOrderId: ""
+            });
+
+       if (paymentMethod === "online") {
+        
+        const sessionRes = await safepay.payments.session.setup({
+        merchant_api_key: process.env.SAFEPAY_API_KEY, // your sec_... 
+        intent: "CYBERSOURCE",
+        mode: "payment",
+        entry_mode: "raw",
+        currency: "PKR",
+        amount: Number(totalAmount) * 100,
+        metadata: { order_id: newOrder._id.toString() }
         });
+
+        const trackerToken = sessionRes.data.tracker.token;
+
+          // Step 2: create auth token
+        const authRes = await safepay.client.passport.create();
+        const authToken = authRes.data;
+
+        newOrder.safepayOrderId = trackerToken;
+        await newOrder.save();
+
+         // Step 3: generate checkout URL
+        const checkoutUrl = safepay.checkout.createCheckoutUrl({
+            tracker: trackerToken,
+            tbt: authToken,
+            env: "sandbox",
+            source: "hosted",
+            redirect_url: `http://localhost:5173/order-placed`,
+            cancel_url: "http://localhost:5173/"
+        });
+        
+
+       
+
+        return res.status(201).json({
+            success: true,
+            isOnline: true,
+            checkoutUrl,
+            orderId: newOrder._id,
+            tracker: trackerToken
+        });
+
+        }
+
         await newOrder.populate("shopOrders.shopOrderItems.item", "name price image.url");
+        await newOrder.populate("shopOrders.shop", "name");
+        await newOrder.populate("shopOrders.owner", "username socketId");
+        await newOrder.populate("user", "username email mobile");
+
+        // SOCKET NOTIFICATION TO SHOP OWNERS
+        const io = req.app.get("io");
+        if(io) {
+            newOrder.shopOrders.forEach( shopOrderr => {
+                const ownerSocketId = shopOrderr.owner.socketId;
+                console.log("OWNER SOCKET ID: ", ownerSocketId)
+                if(ownerSocketId) {
+                    io.to(ownerSocketId).emit('newOrder', {
+                    ...newOrder.toObject(),
+                    shopOrders: shopOrderr,
+                    payment: newOrder.payment
+                })
+                }
+            })
+        }
+        // END SOCKET NOTIFICATION TO SHOP OWNERS
+
         return res.status(201).json({message: "Order Placed", newOrder});
+
     } catch (error) {
-        return res.status(500).json({message: "Error in Place Order Controller", error});        
+        return res.status(500).json({message: "Error in Place Order Controller",
+             "error": error.message, stack: error.stack,
+             "error response": error.response ? error.response.data : null,
+             "error status":error.response ? error.response.status : null});        
     }
 }
+
+export const verifyPayment = async (req, res) => {
+    try {
+        const { tracker } = req.body;
+
+        const response = await axios.get(
+            `https://sandbox.api.getsafepay.com/reporter/api/v1/payments/${tracker}`,
+             {
+                headers: {
+                    "X-SFPY-MERCHANT-SECRET": process.env.SAFEPAY_API_SECRET
+                }
+            }
+        );
+
+        const state = response.data?.data?.state;
+
+        if (!state) {
+            return res.status(400).json({ success: false, message: "Could not fetch payment status" });
+        }
+
+        // const state = response.data.tracker.state;
+
+        if (state !== "TRACKER_ENDED") {
+            return res.status(400).json({ success: false, message: "Payment not completed" });
+        }
+            
+        const order = await Order.findOneAndUpdate(
+            {safepayOrderId: tracker},
+            {payment: true},
+            {new: true}
+        )
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Order not found for this tracker" });
+        }
+        console.log("Order Verified")
+        return res.status(200).json({ success: true, message: "Payment Verified Successfully" });
+            
+    } catch (error) {
+        return res.status(500).json({ message: "Verification Error", error: error.message });
+    }
+};
 
 export const getMyOrders = async(req, res) => {
     try {
@@ -83,7 +210,8 @@ export const getMyOrders = async(req, res) => {
                 const filteredShopOrders = order.shopOrders.filter((shopOrder) => shopOrder.owner.toString() === req.userId);
                 return {
                     ...order.toObject(),
-                    shopOrders: filteredShopOrders
+                    shopOrders: filteredShopOrders,
+                    payment: order.payment
                 }
             })
             

@@ -3,10 +3,12 @@ import { FaShoppingCart } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
 import { useSelector } from "react-redux";
 import { RxCross2 } from "react-icons/rx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { handleLogout } from "../axios/logout";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { handleGetItemsBySearch } from "../axios/shop";
+import { setSearchItems } from "../redux/userSlice";
 
 function Navbar() {
     const navigate = useNavigate()
@@ -15,6 +17,7 @@ function Navbar() {
     const dispatch = useDispatch();
     const [showInfo, setShowInfo] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
+    const [query, setQuery] = useState("");
 
     const onLogoutClick = async() => {
         try{
@@ -23,6 +26,27 @@ function Navbar() {
             console.log(err)
         }
     }
+
+    useEffect( () => {
+
+        if (!query || !query.trim()) {
+            dispatch(setSearchItems([]));
+            return
+        }
+        
+        const timer = setTimeout(async () => {
+            try {
+                await handleGetItemsBySearch(currCity, query, dispatch);
+            } catch (err) {
+                console.error("Search Error:", err);
+                dispatch(setSearchItems([]));
+            }
+        }, 300);
+
+        return () => clearTimeout(timer);
+        
+        
+    }, [query, currCity, dispatch]);
 
     return(
         <>
@@ -43,7 +67,8 @@ function Navbar() {
                         {/* SEARCH SECTION */}
                         <div className="w-[80%]  flex items-center  gap-[10px] ">
                             <CiSearch size={25} className="text-[#ff4d2d]"/>
-                            <input type="text" placeholder="Search Delecious Food..." className="outline-none border-none bg-transparent placeholder:text-gray-500" />
+                            <input type="text" placeholder="Search Delecious Food..." className="outline-none border-none bg-transparent placeholder:text-gray-500"
+                            onChange={ (e) => setQuery(e.target.value)} />
                         </div>
 
                     </div>
@@ -62,7 +87,8 @@ function Navbar() {
                         {/* SEARCH SECTION */}
                         <div className="w-[80%]  flex items-center justify-center gap-[10px] ">
                             <CiSearch size={25} className="text-[#ff4d2d]"/>
-                            <input type="text" placeholder="Search Delecious Food..." className="outline-none border-none bg-transparent placeholder:text-gray-500" />
+                            <input type="text" placeholder="Search Delecious Food..." className="outline-none border-none bg-transparent placeholder:text-gray-500" 
+                            onChange={ (e) => setQuery(e.target.value)}/>
                         </div>
                         </div>
                     }

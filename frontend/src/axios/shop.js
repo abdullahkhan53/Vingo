@@ -1,5 +1,6 @@
 import axios from "axios";
 import { setMyShopData } from "../redux/ownerSlice.js";
+import { setSearchItems } from "../redux/userSlice.js";
 
 const serverUrl = "http://localhost:3000"
 
@@ -41,6 +42,18 @@ export const handleGetShopById = async(shopId) => {
         return result.data;
 
     } catch (err) {
+        throw err;
+    }
+}
+
+export const handleGetItemsBySearch = async(city, query, dispatch) => {
+    try {
+        dispatch(setSearchItems([]));
+        const result = await axios.get(`${serverUrl}/api/shop/itemsBySearch?query=${query}&city=${city}`,
+            {withCredentials: true}
+        );
+        dispatch(setSearchItems(result.data.items));
+    } catch(err) {
         throw err;
     }
 }
