@@ -78,7 +78,7 @@ function OwnerOrderComponent({data}) {
             }
 
             <div className="text-right font-bold text-sm mt-6">
-                <p>Total Amount: Rs{data.shopOrders[0].subTotal}</p>
+                <p>Total Amount: Rs{data.shopOrders[0]?.subTotal}</p>
             </div>
         </div>
     )

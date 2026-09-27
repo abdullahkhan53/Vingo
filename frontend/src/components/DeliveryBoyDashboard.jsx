@@ -6,23 +6,53 @@ import { useState } from "react";
 import DeliveryBoyTracking from "./order/DeliveryBoyTracking";
 
 function DeliveryBoyDashboard() {
-    const { userData } = useSelector(state => state.user);
+    const { userData, socket } = useSelector(state => state.user);
     const [deliveryAssignments, setDeliveryAssignments] = useState([]);
     const [currentOrder, setCurrentOrder] = useState(null);
     const [sendOtp, setSendOtp] = useState(false);
     const [otp, setOtp] = useState(null);
-    console.log("current order for testing: ", currentOrder)
+    const [liveLocations, setLiveLocations] = useState(null);
+
+    
+    useEffect( () => {
+        
+        if(!socket || userData?.role !== "deliveryBoy") return;
+        let watchId;
+        
+            watchId = navigator.geolocation.watchPosition((position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            setLiveLocations({lat: latitude, lon: longitude});
+            if(socket) {
+                socket.emit('updateLocation', {
+                    latitude,
+                    longitude,
+                    userId: userData?._id
+                })
+                }
+            }, (error) => {
+                console.log("Error getting location: ", error);
+            }, {
+                enableHighAccuracy: true,
+            })       
+
+            return () => {
+                if(watchId) {
+                    navigator.geolocation.clearWatch(watchId);
+                }
+            }
+       
+    }, [socket, userData])
+
+
+
     const onDeliveryOrderClick = async(assignmentId) => {
         try {
             const result = await handleDeliveryOrder(assignmentId);
-            // setCurrentOrder(null);
             await handleGetCurrentOrder(setCurrentOrder);
-
-            console.log(result)
         } catch(err) {
             console.log(err)
         }
-
     }
 
     const onHandleSendOtpClick = async(orderId, shopId) => {
@@ -32,21 +62,31 @@ function DeliveryBoyDashboard() {
     }
 
     const onHandleVerifyOtpClick = async(orderId, shopId, otp) => {
-        // setSendOtp(true);
         await handleVerifyDeliveryOtp(orderId, shopId, otp)
         console.log("otp verified")
-
     }
 
     useEffect( () => {
         handleGetCurrentOrder(setCurrentOrder);
         const logData = async() => {
             const data = await handGetDeliveryBoyAssignments();
-            console.log("state data: ",data);
             setDeliveryAssignments(data);
         } 
         logData()
     }, [userData])
+
+    useEffect( () => {
+        socket?.on("newAssignment", (data) => {
+            console.log("new delivery assignment: ", data);
+            setDeliveryAssignments(prev => [...prev, data]);
+        });
+
+        return () => {
+            socket?.off("newAssignment") 
+        }
+
+    }, [socket])
+
 
     return(
         <div className="w-full min-h-screen flex flex-col items-center bg-[#fff9f6]">
@@ -59,8 +99,8 @@ function DeliveryBoyDashboard() {
                                 <div className="flex flex-col items-center gap-4 text-center">
                                     <h1 className="text-xl font-bold text-[#ff4d2d]">Welcome, {userData.username}</h1>
                                     <span>
-                                        <p className="text-sm  text-[#ff4d2d]"><span className="font-semibold">Latitude</span>: {userData.location.coordinates[1]}</p>
-                                        <p className="text-sm  text-[#ff4d2d]"><span className="font-semibold">Longitude</span>: {userData.location.coordinates[0]}</p>
+                                        <p className="text-sm  text-[#ff4d2d]"><span className="font-semibold">Latitude</span>: {liveLocations?.lat || userData.location.coordinates[1]}</p>
+                                        <p className="text-sm  text-[#ff4d2d]"><span className="font-semibold">Longitude</span>: {liveLocations?.lon || userData.location.coordinates[0]}</p>
                                     </span>
                                 </div>
                             </> : 
@@ -108,7 +148,20 @@ function DeliveryBoyDashboard() {
                             <p className="font-semibold  text-orange-400"> {currentOrder.shopName}</p>
                             <p className="text-sm text-gray-400">{currentOrder.shopOrder.shopOrderItems.length} items | {currentOrder.shopOrder.subTotal}</p>
                         </div>
-                        <DeliveryBoyTracking data={currentOrder}/>
+                        <DeliveryBoyTracking data={
+                             {
+                                   deliveryBoyLocation:
+                                   liveLocations ||
+                                   {
+                                    lat: userData.location?.coordinates[1],
+                                    lon: userData.location?.coordinates[0],
+                                   },
+                                   customerLocation:{
+                                    lat: currentOrder.deliveryAddress?.latitude,
+                                    lon: currentOrder.deliveryAddress?.longitude,
+                                   }
+                                }
+                        }/>
                         {
                             !sendOtp ?
                             <button className="w-full bg-green-500 py-2 text-white px-8  rounded-md mt-4 hover:bg-green-600 transition-colors duration-300 cursor-pointer"

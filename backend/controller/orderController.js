@@ -9,6 +9,7 @@ import crypto from "crypto";
 import { sendDeliveryOtpMail } from "../utils/mail.js";
 import Safepay from '@sfpy/node-core'
 import axios from "axios";
+import { userSocketMap } from "../socket.js";
 
 const safepay = new Safepay(process.env.SAFEPAY_API_SECRET, {
   authType: 'secret',
@@ -116,7 +117,7 @@ export const placeOrder = async(req, res) => {
 
         }
 
-        await newOrder.populate("shopOrders.shopOrderItems.item", "name price image.url");
+        await newOrder.populate("shopOrders.shopOrderItems.item", "name price image");
         await newOrder.populate("shopOrders.shop", "name");
         await newOrder.populate("shopOrders.owner", "username socketId");
         await newOrder.populate("user", "username email mobile");
@@ -125,12 +126,17 @@ export const placeOrder = async(req, res) => {
         const io = req.app.get("io");
         if(io) {
             newOrder.shopOrders.forEach( shopOrderr => {
-                const ownerSocketId = shopOrderr.owner.socketId;
-                console.log("OWNER SOCKET ID: ", ownerSocketId)
+               
+                const ownerId = shopOrderr.owner._id ? shopOrderr.owner._id.toString() : shopOrderr.owner.toString();
+                
+                const ownerSocketId = userSocketMap[ownerId];
+
+                console.log(`Sending order to Owner ID: ${ownerId} on Socket ID: ${ownerSocketId}`);
+                
                 if(ownerSocketId) {
                     io.to(ownerSocketId).emit('newOrder', {
                     ...newOrder.toObject(),
-                    shopOrders: shopOrderr,
+                    shopOrders: [shopOrderr],
                     payment: newOrder.payment
                 })
                 }
@@ -181,6 +187,34 @@ export const verifyPayment = async (req, res) => {
         if (!order) {
             return res.status(404).json({ success: false, message: "Order not found for this tracker" });
         }
+        
+        await order.populate("shopOrders.shopOrderItems.item", "name price image.url");
+        await order.populate("shopOrders.shop", "name");
+        await order.populate("shopOrders.owner", "username socketId");
+        await order.populate("user", "username email mobile");
+
+         // SOCKET NOTIFICATION TO SHOP OWNERS
+        const io = req.app.get("io");
+        if(io) {
+            order.shopOrders.forEach( shopOrderr => {
+               
+                const ownerId = shopOrderr.owner._id ? shopOrderr.owner._id.toString() : shopOrderr.owner.toString();
+                
+                const ownerSocketId = userSocketMap[ownerId];
+
+                console.log(`Sending order to Owner ID: ${ownerId} on Socket ID: ${ownerSocketId}`);
+                
+                if(ownerSocketId) {
+                    io.to(ownerSocketId).emit('newOrder', {
+                    ...order.toObject(),
+                    shopOrders: [shopOrderr],
+                    payment: order.payment
+                })
+                }
+            })
+        }
+        // END SOCKET NOTIFICATION TO SHOP OWNERS
+
         console.log("Order Verified")
         return res.status(200).json({ success: true, message: "Payment Verified Successfully" });
             
@@ -245,6 +279,27 @@ export const updateOrderStatus = async(req, res) => {
         }
         newShopOrder.status = status;
         await order.save();
+
+        const io = req.app.get("io");
+        if (io) {
+            const [customer, owner] = await Promise.all([
+                User.findById(order.user, "socketId"),
+                User.findById(newShopOrder.owner, "socketId")
+            ]);
+            const statusUpdate = {
+                orderId: String(order._id),
+                shopId: String(shopId),
+                status
+            };
+
+            if (customer?.socketId) {
+                io.to(customer.socketId).emit("orderStatusUpdated", statusUpdate);
+            }
+            if (owner?.socketId) {
+                io.to(owner.socketId).emit("orderStatusUpdated", statusUpdate);
+            }
+        }
+
         let deliveryBoyPayload = [];
         // Find available delivery boys
         if(status == "preparing" || status == "pending") {
@@ -301,6 +356,29 @@ export const updateOrderStatus = async(req, res) => {
                 latitude: b.location.coordinates[1],
                 mobile: b.mobile
             }))
+
+            await deliveryAssignment.populate("shop");
+            await deliveryAssignment.populate("order");
+            await deliveryAssignment.populate("shopOrderId", "shopOrderItems subTotal");
+
+            const io = req.app.get("io");
+            if(io) {
+                availableDeliveryBoys.forEach(boy => {
+                    const boySocketId = boy.socketId;
+                    if(boySocketId) {
+                        io.to(boySocketId).emit("newAssignment", {
+                        assignmentId: deliveryAssignment._id,
+                        orderId: deliveryAssignment.order._id,
+                        shopName: deliveryAssignment.shop.name,
+                        deliveryAddress: deliveryAssignment.order.deliveryAddress,
+                        items: deliveryAssignment.order.shopOrders.find(so => so._id.equals(deliveryAssignment.shopOrderId)).
+                        shopOrderItems || [],
+                        subTotal: deliveryAssignment.order.shopOrders.find(so => so._id.equals(deliveryAssignment.shopOrderId))?.subTotal,     
+                    })
+                    }
+                })
+            }
+
         }
         await order.save();
         const updatedShopOrder = order.shopOrders.find((so) => (so.shop?._id || so.shop).toString() === shopId.toString())
@@ -317,7 +395,7 @@ export const updateOrderStatus = async(req, res) => {
         });
 
     } catch (error) {
-        return res.status(500).json({message: "something wrong in updateOrderStatus controller", error});
+        return res.status(500).json({message: "something wrong in updateOrderStatus controller", error: error.message});
     }
 }
 
@@ -514,6 +592,8 @@ export const verifyDeliveryOtp = async(req, res) => {
         shopOrder.status = "delivered";
         shopOrder.deliveredAt = Date.now();
         shopOrder.assignment.status = "delivered";
+
+        await order.save();
 
         await DeliveryAssignment.deleteOne({
             order: order._id,

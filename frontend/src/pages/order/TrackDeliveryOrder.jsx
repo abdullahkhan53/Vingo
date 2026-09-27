@@ -4,11 +4,32 @@ import { useEffect, useState } from "react";
 import { handleGetOrderById } from "../../axios/order.js";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import DeliveryBoyTracking from "../../components/order/DeliveryBoyTracking.jsx";
+import { useSelector } from "react-redux";
 
 function TrackDeliveryOrder() {
     const {orderId} = useParams();
     const navigate = useNavigate();
+    const { socket } = useSelector(state => state.user);
     const [currentOrder, setCurrentOrder] = useState(null)
+    const [liveLocations, setLiveLocations] = useState({});
+
+   useEffect(() => {
+        if (!socket) return;
+
+        const handleLocationUpdate = ({ deliveryBoyId, latitude, longitude }) => {
+            setLiveLocations(prev => ({
+                ...prev,
+                [deliveryBoyId]: { lat: latitude, lon: longitude }
+            }));
+        };
+
+        socket.on("updateDeliveryBoyLocation", handleLocationUpdate);
+
+        return () => {
+            socket.off("updateDeliveryBoyLocation", handleLocationUpdate);
+        };
+    }, [socket]);
+
     useEffect( () => {
         const data = async() => {
             const result = await handleGetOrderById(orderId);
@@ -56,10 +77,14 @@ function TrackDeliveryOrder() {
                             }
 
                             {/* DELIVERY BOY TRACKING */}
+                           {
+                             shopOrder.assignedDeliveryBoy ?
                             <DeliveryBoyTracking
                             data={
                                 {
-                                   deliveryBoyLocation:{
+                                   deliveryBoyLocation:
+                                   liveLocations[shopOrder?.assignedDeliveryBoy?._id] || 
+                                   {
                                     lat: shopOrder.assignedDeliveryBoy?.location?.coordinates[1],
                                     lon: shopOrder.assignedDeliveryBoy?.location?.coordinates[0],
                                    },
@@ -69,7 +94,9 @@ function TrackDeliveryOrder() {
                                    }
                                 }
                             }
-                            />
+                            /> :
+                            <p>Delivery Boy has not been assigned yet!</p>
+                        }
 
                         </div>
                     ))

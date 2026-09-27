@@ -4,35 +4,41 @@ import { useNavigate } from "react-router-dom";
 import {useSelector, useDispatch} from "react-redux";
 import UserOrderComponent from "../../components/order/UserOrderComponent";
 import OwnerOrderComponent from "../../components/order/OwnerOrderComponent";
-import { setMyOrders } from "../../redux/userSlice";
+import { setMyOrders, setUpdateOrderStatus } from "../../redux/userSlice";
 import { useEffect } from "react";
+import { handleGetMyOrders } from "../../axios/order.js";
 
 function MyOrders() {
     const {userData, myOrders, socket} = useSelector((state) => state.user);
     const dispatch = useDispatch()
     const navigate = useNavigate();
 
-    console.log("MyOrders.jsx: ", myOrders)
-    console.log("MyOrders.jsx: ", socket)
-    console.log("MyOrders.jsx: ", userData)
 
-    useEffect( () => {
-       
+
+    useEffect(() => {
         if (!userData || !socket) return;
 
-         if(userData) {
-            socket?.on('newOrder', (data) => {
-                console.log("New Order Received in MyOrders.jsx", data)
-                if(data?.shopOrders?.owner?._id == userData._id) {
-                    dispatch(setMyOrders([data, ...myOrders]))
-                }
-            })
-        }
-    
-            return () => {
-                socket?.off('newOrder')   
-            }        
-    }, [socket])
+        const handleNewOrder = (data) => {
+            console.log("New Order Received in MyOrders.jsx", data);
+            if (userData.role === "owner" && data?.shopOrders[0]?.owner?._id === userData._id) {
+                dispatch(setMyOrders([data, ...myOrders]));
+            }
+        };
+
+        const handleOrderStatusUpdated = async (data) => {
+            dispatch(setUpdateOrderStatus(data));
+            const order = await handleGetMyOrders()
+             dispatch(setMyOrders(order));
+        };
+
+        socket.on("newOrder", handleNewOrder);
+        socket.on("orderStatusUpdated", handleOrderStatusUpdated);
+
+        return () => {
+            socket.off("newOrder", handleNewOrder);
+            socket.off("orderStatusUpdated", handleOrderStatusUpdated);
+        };
+    }, [socket, userData, myOrders, dispatch]);
 
 
     return(

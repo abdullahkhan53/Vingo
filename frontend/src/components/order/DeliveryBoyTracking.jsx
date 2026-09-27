@@ -2,6 +2,8 @@ import react from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import scooter from "../../assets/scooter.png";
 import home from "../../assets/home.png";
+import L from "leaflet";
+
 
 const deliveryBoyIcon = new L.Icon({
     iconUrl: scooter,
@@ -18,7 +20,7 @@ function DeliveryBoyTracking({data}) {
     let deliveryBoyLat = data.deliveryBoyLocation.lat
     let deliveryBoyLon = data.deliveryBoyLocation.lon
     let customerLat = data.customerLocation.lat
-    let customerlon = data.customerLocation.lat
+    let customerlon = data.customerLocation.lon
     const path = [
         [deliveryBoyLat, deliveryBoyLon],
         [customerLat, customerlon]
